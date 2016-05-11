@@ -1,27 +1,29 @@
 import User
 
-def __init__(self):
-	self.list_of_users = []
+class UsersManager:
 
-def createUser():
-	#code for creating
+	def __init__(self):
+		self.list_of_users = []
 
-def loadUsers():
-	#loading from files
+	def createUser(self):
+		#code for creating
 
-def printUsers():
-	#show active users
+	def loadUsers(self):
+		#loading from files
 
-def findUser(username):
-	#for finding if username already exists
+	def printUsers(self):
+		#show active users
 
-def login(username, password):
-	#to create a connection with the sockets
+	def findUser(self, username):
+		#for finding if username already exists
 
-def findActiveUser(username):
-	#find if user is already logged on, limiting another connection from it
-	
-def logout(username):
-	#log out the user and mark as inactive
+	def login(self, username, password):
+		#to create a connection with the sockets
 
-#def deleteUser(username): optional
+	def findActiveUser(self, username):
+		#find if user is already logged on, limiting another connection from it
+		
+	def logout(self, username):
+		#log out the user and mark as inactive
+
+	#def deleteUser(username): optional

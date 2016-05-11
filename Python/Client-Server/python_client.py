@@ -13,3 +13,7 @@ salir_op = input("Salir? Y/N ")
 
 if(salir_op == "Y"):
 	s.close()
+
+opcion = 0
+
+while opcion != 3
