@@ -51,7 +51,18 @@ while (opcion != 3):
 			client_socket.close()
 
 	elif (opcion == 2):
-		print('')
+		try:
+			print('')
+		finally:
+			op = 0
 
 	elif (opcion == 3):
+		try:
+			client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
+			client_socket.connect(('localhost', 8888)) #conectar al servidor
+
+			client_socket.sendall(str(opcion).encode('ascii'))
+			
+		finally:
+			client_socket.close()
 		print("Saliendo...")

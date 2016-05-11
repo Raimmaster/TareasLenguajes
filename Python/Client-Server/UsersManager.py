@@ -19,7 +19,7 @@ class UsersManager:
 			if (u.username == username):
 				return u
 
-		return False
+		return None
 
 	def login(self, username, password):
 		#to create a connection with the sockets

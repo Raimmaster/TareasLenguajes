@@ -17,32 +17,38 @@ server_socket = socket(AF_INET, SOCK_STREAM) #Crear socket TCP
 server_socket.bind(('', 8888)) #bind to port 8888
 server_socket.listen(5) #5 conexiones pendientes
 
-op = 0
+option_received = 0
 
-while op != 3: #3 salir
+while option_received != 3: #3 salir
 	try:
 		client_socket, addr = server_socket.accept() #get connection
-		print("Obtuve conexion de dir %s" % str(addr))
-		#timestr = time.ctime(time.time()) + "\r\n"
-		#client_socket.send(timestr.encode('ascii'))
-		#client_socket.close()
+		print("Obtuve conexion de dir %s" % str(addr))	
 		option_received = int(str(client_socket.recv(1024), 'ascii'))
-		if(option_received == 1):
-			#print("Ing")
+		if(option_received == 1): #para ingresar usuario
 			mensaje_enviar = 'Ingresar usuario:'
-			client_socket.sendall(mensaje_enviar.encode('ascii'))
-			#print("aspetto")
+			client_socket.sendall(mensaje_enviar.encode('ascii'))			
 			username = str(client_socket.recv(1024).decode('ascii'))		
-			password = str(client_socket.recv(1024).decode('ascii'))
-			#print("pasado")
+			password = str(client_socket.recv(1024).decode('ascii'))			
 			userManager.createUser(username, password)		
 			mensaje_enviar = 'Usuario creado'
 			client_socket.sendall(mensaje_enviar.encode('ascii'))
 			print ("Creado")
+		if(option_received == 2):
+			mensaje_enviar = 'Login:'
+			client_socket.sendall(mensaje_enviar.encode('ascii'))			
+			username = str(client_socket.recv(1024).decode('ascii'))		
+			password = str(client_socket.recv(1024).decode('ascii'))						
+			if(userManager.login(username, password)): #permitir las otras funciones
+				mensaje_enviar = 'Dir User:'
+				client_socket.sendall(mensaje_enviar.encode('ascii'))
+				while (True):
+					print('el resto')
 	finally:		
 		client_socket.close();
-		print ("Con closed")
+		fManager.writeToUsersFile(userManager.listOfUsers)
+		print ("Conexion cerrada de: %s" % str(addr))
 
+server_socket.close()
 
 def createConnection():
 	#crear/aceptar conexión para el usuario

@@ -11,7 +11,7 @@ class FileManager:
 	def writeToUsersFile(self, userList):		
 		if(os.path.isfile(self.usersFile)):
 			#salvar la lista anterior de usuarios, y sobreescribir
-			self.readFile()
+			self.readUsersFile()
 
 		#usuario = User.User('Yo', 'Daa')				
 		#usuario2 = User.User('Doo', 'Dee')
@@ -20,15 +20,13 @@ class FileManager:
 		#self.usuariosList.append(usuario2)
 		#userList = {usuario.userToList(), usuario2.userToList()}
 		with open(self.usersFile, "w") as file:
-			json.dump(self.usuariosList, file, default=lambda userDict: userDict.__dict__)
+			json.dump(userList, file, default=lambda userDict: userDict.__dict__)
 
 	def readUsersFile(self):
 		with open(self.usersFile, 'r+') as file:
 			self.usuariosList = (json.load(file))
 
 		return self.usuariosList
-			#print current users
-		#print(self.usuariosList)
 
 	def toUserList(self, lista):
 		userList = []
