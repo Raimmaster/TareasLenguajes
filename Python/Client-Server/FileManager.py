@@ -1,8 +1,8 @@
+import os.path
 import User
 import json
-import os.path
 
-class FileTester:
+class FileManager:
 
 	def __init__(self, usersFile):
 		self.usersFile = usersFile
