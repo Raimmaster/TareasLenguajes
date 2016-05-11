@@ -37,7 +37,7 @@ class UsersManager:
 		
 	def logout(self, username):
 		#log out the user and mark as inactive
-		return
+		return (username, True)
 
 	def loadUsers(self):
 		#loading from files

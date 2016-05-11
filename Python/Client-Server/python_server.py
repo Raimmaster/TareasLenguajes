@@ -1,7 +1,7 @@
 import time
 import UsersManager
 import FileManager
-import os.path
+import os
 from socket import *
 
 
@@ -9,6 +9,8 @@ fManager = FileManager.FileManager("usuarios.txt")
 users = []
 if (os.path.isfile(fManager.usersFile)):
 	users = fManager.toUserList(fManager.readFile())
+
+userManager = UsersManager.UsersManager(users)
 
 print (users)
 
@@ -39,7 +41,12 @@ def changeDirectory(): #cd
 	return
 
 def listFiles(): #ls
-	return
+	for file in os.listdir():
+		if(os.path.isdir(file)):
+			print ("* %s " % file)
+		else:		
+			print ("- %s " % file)
+	
 
 def putFile(): #get file from client, save in server
 	return
@@ -47,11 +54,27 @@ def putFile(): #get file from client, save in server
 def getFile(): #give file to client
 	return
 
-def removeFile(): #remove file or directory
+def removeFile(filename): #remove file
+	os.remove(filename)
 	return
 
-def createDirectory(): #mkdir
+def removeDirectory(dirname, username): #remove directory and all its files
+	path = "Usuarios/" + username + "/" + dirname + "/"
+	files = os.listdir(path)
+	for f in files:
+		removeFile(f)
+
+	os.rmdir(dirName)
+
 	return
+
+def createDirectory(username, dirName): #mkdir
+	dirFullPath = "Usuarios/" + username + "/" + dirName
+	if(not os.path.isdir(dirFullPath))
+		os.mkdir(dirFullPath)
+		return True
+
+	return False
 
 def getCurrentDirName(): #pwd, optional
 	return

@@ -1,4 +1,4 @@
-import os.path
+import os
 import User
 import json
 
@@ -35,5 +35,10 @@ class FileManager:
 		for u in lista:
 			usuario = User.User(str(u.get('username')), str(u.get('password')))
 			userList.append(usuario)
+			#crear directorio en caso que no exista
+			dirName = "Usuarios/" + usuario.username 
+			if(not os.path.isdir(dirName)):
+				os.mkdir(dirName)
+				print("Created user dir!")
 
 		return userList

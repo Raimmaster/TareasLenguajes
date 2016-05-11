@@ -1,6 +1,8 @@
-import FileTester
+import FileManager
 import User
-fTester = FileTester.FileTester("usuarios.txt")
+import os
+
+fTester = FileManager.FileManager("usuarios.txt")
 
 #fTester.writeToFile()
 lista = fTester.readFile()
@@ -12,3 +14,7 @@ for u in lista:
 
 for u in userList:
 	print(u.username + ' ' + u.password)
+	dirName = "Usuarios/" + u.username 
+	if(not os.path.isdir(dirName)):
+		os.mkdir(dirName)
+		print("Created!")
