@@ -13,12 +13,6 @@ class FileManager:
 			#salvar la lista anterior de usuarios, y sobreescribir
 			self.readUsersFile()
 
-		#usuario = User.User('Yo', 'Daa')				
-		#usuario2 = User.User('Doo', 'Dee')
-		#userList = []
-		#self.usuariosList.append(usuario)
-		#self.usuariosList.append(usuario2)
-		#userList = {usuario.userToList(), usuario2.userToList()}
 		with open(self.usersFile, "w") as file:
 			json.dump(userList, file, default=lambda userDict: userDict.__dict__)
 

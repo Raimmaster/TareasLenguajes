@@ -52,9 +52,29 @@ while (opcion != 3):
 
 	elif (opcion == 2):
 		try:
-			print('')
+			#conectar
+			client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
+			client_socket.connect(('localhost', 8888)) #conectar al servidor
+
+			client_socket.sendall(str(opcion).encode('ascii'))
+			response = client_socket.recv(1024)
+			print(response.decode('ascii'))
+			if response.decode('ascii') =='Login:':
+				username = input("Ingrese el username: ")
+				password = input("Ingrese el password: ")
+				#send to server for creation
+				client_socket.sendall(username.encode('ascii'))							
+				client_socket.sendall(password.encode('ascii'))
+				mensaje = client_socket.recv(1024)
+				if (mensaje.decode('ascii') == 'Dir User:'):
+					print ("Conexion establecida!")
+					data_con = ''
+					while data_con != 'Log Off:':
+
+						
+			
 		finally:
-			op = 0
+			client_socket.close()
 
 	elif (opcion == 3):
 		try:
