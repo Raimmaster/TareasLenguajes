@@ -8,7 +8,7 @@ class FileManager:
 		self.usersFile = usersFile
 		self.usuariosList = []
 
-	def writeToFile(self, userList):		
+	def writeToUsersFile(self, userList):		
 		if(os.path.isfile(self.usersFile)):
 			#salvar la lista anterior de usuarios, y sobreescribir
 			self.readFile()
@@ -22,7 +22,7 @@ class FileManager:
 		with open(self.usersFile, "w") as file:
 			json.dump(self.usuariosList, file, default=lambda userDict: userDict.__dict__)
 
-	def readFile(self):
+	def readUsersFile(self):
 		with open(self.usersFile, 'r+') as file:
 			self.usuariosList = (json.load(file))
 

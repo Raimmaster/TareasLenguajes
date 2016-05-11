@@ -5,17 +5,18 @@ class UsersManager:
 	def __init__(self, lista):
 		self.listOfUsers = lista
 
-	def createUser(self):
-		username = input("Ingrese el username: ")
-		password = input("Ingrese el password: ")
+	def createUser(self, username, password):
 		user = User.User(username, password)
 		self.listOfUsers.append(user)
+
+		for us in self.listOfUsers:
+			print(us.username)
 		#code for creating
 
 	def findUser(self, username):
 		#for finding if username already exists
 		for u in self.listOfUsers:
-			if (u.username == username)
+			if (u.username == username):
 				return u
 
 		return False
@@ -23,8 +24,8 @@ class UsersManager:
 	def login(self, username, password):
 		#to create a connection with the sockets
 		user = findUser()
-		if(user)
-			if(user.password == password)
+		if(user):
+			if(user.password == password):
 				return True
 		
 		return False

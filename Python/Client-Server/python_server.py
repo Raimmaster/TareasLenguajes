@@ -4,29 +4,44 @@ import FileManager
 import os
 from socket import *
 
-
+#Check on users, create otherwise
 fManager = FileManager.FileManager("usuarios.txt")
 users = []
 if (os.path.isfile(fManager.usersFile)):
-	users = fManager.toUserList(fManager.readFile())
+	users = fManager.toUserList(fManager.readUsersFile())
 
 userManager = UsersManager.UsersManager(users)
-
-print (users)
 
 #para el socket
 server_socket = socket(AF_INET, SOCK_STREAM) #Crear socket TCP
 server_socket.bind(('', 8888)) #bind to port 8888
 server_socket.listen(5) #5 conexiones pendientes
 
-while True:
-	client_socket, addr = server_socket.accept() #get connection
-	print("Obtuve conexion de dir %s" % str(addr))
-	timestr = time.ctime(time.time()) + "\r\n"
-	client_socket.send(timestr.encode('ascii'))
-	client_socket.close()
+op = 0
 
-server_socket.close();
+while op != 3: #3 salir
+	try:
+		client_socket, addr = server_socket.accept() #get connection
+		print("Obtuve conexion de dir %s" % str(addr))
+		#timestr = time.ctime(time.time()) + "\r\n"
+		#client_socket.send(timestr.encode('ascii'))
+		#client_socket.close()
+		option_received = int(str(client_socket.recv(1024), 'ascii'))
+		if(option_received == 1):
+			#print("Ing")
+			mensaje_enviar = 'Ingresar usuario:'
+			client_socket.sendall(mensaje_enviar.encode('ascii'))
+			#print("aspetto")
+			username = str(client_socket.recv(1024).decode('ascii'))		
+			password = str(client_socket.recv(1024).decode('ascii'))
+			#print("pasado")
+			userManager.createUser(username, password)		
+			mensaje_enviar = 'Usuario creado'
+			client_socket.sendall(mensaje_enviar.encode('ascii'))
+			print ("Creado")
+	finally:		
+		client_socket.close();
+		print ("Con closed")
 
 
 def createConnection():
@@ -70,7 +85,7 @@ def removeDirectory(dirname, username): #remove directory and all its files
 
 def createDirectory(username, dirName): #mkdir
 	dirFullPath = "Usuarios/" + username + "/" + dirName
-	if(not os.path.isdir(dirFullPath))
+	if(not os.path.isdir(dirFullPath)):
 		os.mkdir(dirFullPath)
 		return True
 
