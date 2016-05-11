@@ -23,8 +23,9 @@ class UsersManager:
 
 	def login(self, username, password):
 		#to create a connection with the sockets
-		user = findUser()
+		user = self.findUser(username)
 		if(user):
+			print('Found user')
 			if(user.password == password):
 				return True
 		

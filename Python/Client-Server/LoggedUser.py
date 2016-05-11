@@ -19,12 +19,11 @@ class LoggedUser:
 			self.current_dir = self.prev_dir
 			self.prev_dir = self.current_dir
 			return self.current_dir
-		else 
+		else:
 			files_dirs = os.listdir()
-			if(new_dir in files_dirs and os.path.isdir(new_dir))
+			if(new_dir in files_dirs and os.path.isdir(new_dir)):
 				self.prev_dir = self.current_dir
 				self.current_dir = self.prev_dir + "/" + new_dir
-
 
 	def listFiles(self): #ls		
 		for file in os.listdir():
@@ -62,7 +61,7 @@ class LoggedUser:
 		return False
 
 	def getCurrentDirName(): #pwd, optional
-		return
+		return self.current_dir
 
 	def exit(): #close server?
 		return	
