@@ -35,6 +35,7 @@ server_socket.bind(('', 8888)) #bind to port 8888
 server_socket.listen(5) #5 conexiones pendientes
 
 option_received = 0
+op_con_dirs = (1, 2, 4, 5, 6, 7)
 
 while option_received != 3: #3 salir
 	try:
@@ -60,8 +61,31 @@ while option_received != 3: #3 salir
 				print('Logineado')
 				loggedUser = LoggedUser.LoggedUser(username)
 				client_socket.sendall(mensaje_enviar.encode('ascii'))
+				dir_name = ''
 				while (True):
-					opciones = (1, 2, 3, 4, 5, 6 ,7)			
+					option_received = int(str(client_socket.recv(1024), 'ascii'))
+
+					if(option_received in op_con_dirs)
+						dir_name = str(client_socket.recv(1024).decode('ascii'))
+
+					if(option_received == 1)#cd
+						loggedUser.changeDirectory(dir_name)
+					elif(option_received == 2) #ls
+						loggedUser.listFiles()
+					elif(option_received == 3) #put
+						loggedUser.putFile(dir_name)
+					elif(option_received == 4) #get		
+						loggedUser.getFile(dir_name)
+					elif(option_received == 5) #rm file
+						loggedUser.removeFile(dir_name)
+					elif(option_received == 6) #rmdir
+						loggedUser.removeDirectory(dir_name)
+					elif(option_received == 7) #mkdir			
+						loggedUser.createDirectory(dir_name)
+					elif(option_received == 8) #pwd
+						loggedUser.getCurrentDirName()
+					elif(option_received == 9) #exit
+						print('Logging user off...')	
 	finally:			
 		print('Ha acabado.')
 

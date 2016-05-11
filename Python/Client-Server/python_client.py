@@ -10,7 +10,7 @@ from socket import *
 #	client_socket.close()
 
 opcion = 0
-logged_options = ('1. cd', '2. ls', '3. put (file)', '4. get', '5. rm file', '6. rmdir dir', '7. mkdir dir', '8. pwd')
+logged_options = ('1. cd', '2. ls', '3. put (file)', '4. get', '5. rm file', '6. rmdir dir', '7. mkdir dir', '8. pwd', '9. Salir')
 while (opcion != 3):
 	print('')
 	print("1. Crear usuario. ")
@@ -68,13 +68,38 @@ while (opcion != 3):
 				mensaje = client_socket.recv(1024)
 				if (mensaje.decode('ascii') == 'Dir User:'):#conectado
 					print ("Conexion establecida!")
-					print('Opciones: \n')
-					for indices in logged_options:
-						print(indices)
+					
 					data_con = ''
+					op_con_dirs = (1, 2, 4, 5, 6, 7)
 					while data_con != 'Log Off:':
-						print('')
-			
+						print('Opciones: \n')
+						for indices in logged_options:
+						print(indices)
+						selected_option = int(input('Elegir: '))
+						dir_name = ''
+						if(selected_option == 1)#cd
+							dir_name = input('Ingrese el nuevo directorio a estar: ')
+						elif(selected_option == 2) #ls
+							print('Listar directorios: \n')
+						elif(selected_option == 3) #put
+							dir_name = input('Ingrese el path del archivo a subir: ')
+						elif(selected_option == 4) #get						
+							dir_name = input('Ingrese el nombre del archivo a bajar: ')
+						elif(selected_option == 5) #rm file						
+							dir_name = input('Ingrese el nombre del archivo a eliminar: ')
+						elif(selected_option == 6) #rmdir
+							dir_name = input('Ingrese el nombre del directorio a eliminar: ')
+						elif(selected_option == 7) #mkdir							
+							dir_name = input('Ingrese el path del directorio a crear: ')
+						elif(selected_option == 8) #pwd
+							print('Me encuentro en: ')
+						elif(selected_option == 9) #exit
+							print('Log off...')
+
+						client_socket.sendall(str(selected_option).encode('ascii'))
+						if(selected_option in op_con_dirs)
+							client_socket.sendall(dir_name.encode('ascii'))
+
 		finally:
 			client_socket.close()
 

@@ -32,10 +32,10 @@ class LoggedUser:
 			else:		
 				print ("- %s " % file)
 
-	def putFile(self): #get file from client, save in server
+	def putFile(self, filename): #get file from client, save in server
 		return
 
-	def getFile(self): #give file to client
+	def getFile(self, filename): #give file to client
 		return
 
 	def removeFile(self, filename): #remove file
