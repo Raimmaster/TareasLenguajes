@@ -65,26 +65,26 @@ while option_received != 3: #3 salir
 				while (True):
 					option_received = int(str(client_socket.recv(1024), 'ascii'))
 
-					if(option_received in op_con_dirs)
+					if(option_received in op_con_dirs):
 						dir_name = str(client_socket.recv(1024).decode('ascii'))
-
-					if(option_received == 1)#cd
+					
+					if(option_received == 1):#cd
 						loggedUser.changeDirectory(dir_name)
-					elif(option_received == 2) #ls
+					elif(option_received == 2): #ls
 						loggedUser.listFiles()
-					elif(option_received == 3) #put
+					elif(option_received == 3): #put
 						loggedUser.putFile(dir_name)
-					elif(option_received == 4) #get		
+					elif(option_received == 4): #get		
 						loggedUser.getFile(dir_name)
-					elif(option_received == 5) #rm file
+					elif(option_received == 5): #rm file
 						loggedUser.removeFile(dir_name)
-					elif(option_received == 6) #rmdir
+					elif(option_received == 6): #rmdir
 						loggedUser.removeDirectory(dir_name)
-					elif(option_received == 7) #mkdir			
+					elif(option_received == 7): #mkdir			
 						loggedUser.createDirectory(dir_name)
-					elif(option_received == 8) #pwd
+					elif(option_received == 8): #pwd
 						loggedUser.getCurrentDirName()
-					elif(option_received == 9) #exit
+					elif(option_received == 9): #exit
 						print('Logging user off...')	
 						mensaje_enviar = 'Log Off:'
 						client_socket.sendall(mensaje_enviar.encode('ascii'))								
