@@ -1,9 +1,14 @@
+#!/usr/bin/env python
+
+# -*- coding: utf-8 -*-
+
+#
+
 import UsersManager
 import FileManager
 import LoggedUser
 import os
 from socket import *
-
 
 def createConnection():
 	#crear/aceptar conexión para el usuario
@@ -35,7 +40,7 @@ server_socket.bind(('', 8888)) #bind to port 8888
 server_socket.listen(5) #5 conexiones pendientes
 
 option_received = 0
-op_con_dirs = (1, 3, 4, 5, 6, 7)
+op_con_dirs = (1, 5, 6, 7)
 
 while option_received != 3: #3 salir
 	try:
@@ -69,8 +74,9 @@ while option_received != 3: #3 salir
 					if(option_received in op_con_dirs):
 						dir_name = str(client_socket.recv(1024).decode('ascii'))
 					
-					if(option_received == 3 or option_received == 4)
-						file_name = str(client_socket.recv(1024).decode('ascii'))
+					if(option_received == 3 or option_received == 4):
+						print("Opcion: " + str(option_received))
+						file_name = str(client_socket.recv(1024).decode('utf-8'))
 
 					if(option_received == 1):#cd
 						loggedUser.changeDirectory(dir_name)
@@ -80,19 +86,20 @@ while option_received != 3: #3 salir
 						dir_to_write = loggedUser.getCurrentDirName()
 
 						while True:
-						    #current_dir + "/" + filename
-						    n_file = open(dir_to_write + '/' + file_name,'wb') 
-						    while (not n_file.closed):       
-						    #recibimos y escribir
-						        data = sclient.recv(1024)
-						        while (data):
+							path_write = dir_to_write + '/' + file_name
+							print(path_write)
+							n_file = open(path_write, 'wb')
+							while(not n_file.closed):
+								#recibimos y escribimos
+								data = client_socket.recv(1024)
+								while(data):
 									n_file.write(data)
-									data = sclient.recv(1024)
-						        n_file.close()
+									data = client_socket.recv(1024)
+								n_file.close()									
+							break
+							#client_socket.close()
 
-						    client_socket.close()
-
-
+						mensaje_enviar = 'Written'
 						loggedUser.putFile(dir_name)
 					elif(option_received == 4): #get		
 						loggedUser.getFile(dir_name)
@@ -109,7 +116,8 @@ while option_received != 3: #3 salir
 					elif(option_received == 9): #exit
 						print('Logging user off...')	
 						mensaje_enviar = 'Log Off:'
-						client_socket.sendall(mensaje_enviar.encode('ascii'))								
+					
+					client_socket.sendall(mensaje_enviar.encode('ascii'))								
 	finally:			
 		print('Ha acabado.')
 

@@ -1,6 +1,12 @@
+#!/usr/bin/env python
+
+# -*- coding: utf-8 -*-
+
+#
+
 #time client program
 from socket import *
-
+#import socket
 #tm = client_socket.recv(1024) #recibir no más de 1 KB
 
 #print("El tiempo es %s" % tm.decode('ascii'))
@@ -71,7 +77,7 @@ while (opcion != 3):
 					print ("Conexion establecida!")
 					
 					data_con = ''
-					op_con_dirs = (1, 3, 4, 5, 6, 7)
+					op_con_dirs = (1, 5, 6, 7)
 					while data_con != 'Log Off:':
 						print('Opciones: \n')
 						for indices in logged_options:
@@ -105,6 +111,20 @@ while (opcion != 3):
 						client_socket.sendall(str(selected_option).encode('ascii'))
 						if(selected_option in op_con_dirs):
 							client_socket.sendall(dir_name.encode('ascii'))
+
+						if(selected_option == 3):
+							client_socket.sendall(((file_name)).encode('utf-8'))
+							f_send = open (dir_name, "rb") 
+							bytes_data = f_send.read(1024)
+							while (bytes_data):
+							    client_socket.sendall(bytes_data)
+							    bytes_data = f_send.read(1024)
+
+							f_send.close()
+							print('Archivo enviado')
+							#client_socket.shutdown(socket.SHUT_WR)
+							client_socket.close()
+							op = 0
 
 						data_con = client_socket.recv(1024)
 						print(str(data_con.decode('ascii')))
