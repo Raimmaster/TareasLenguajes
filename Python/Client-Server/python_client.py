@@ -59,6 +59,7 @@ while (opcion != 3):
 			client_socket.sendall(str(opcion).encode('ascii'))
 			response = client_socket.recv(1024)
 			print(response.decode('ascii'))
+		
 			if response.decode('ascii') =='Login:':
 				username = input("Ingrese el user: ")
 				password = input("Ingrese el pass: ")
@@ -70,39 +71,45 @@ while (opcion != 3):
 					print ("Conexion establecida!")
 					
 					data_con = ''
-					op_con_dirs = (1, 2, 4, 5, 6, 7)
+					op_con_dirs = (1, 3, 4, 5, 6, 7)
 					while data_con != 'Log Off:':
 						print('Opciones: \n')
 						for indices in logged_options:
-						print(indices)
+							print(indices)
+						
 						selected_option = int(input('Elegir: '))
 						dir_name = ''
-						if(selected_option == 1)#cd
+						
+						if(selected_option == 1): #cd
 							dir_name = input('Ingrese el nuevo directorio a estar: ')
-						elif(selected_option == 2) #ls
+						elif(selected_option == 2): #ls
 							print('Listar directorios: \n')
-						elif(selected_option == 3) #put
+						elif(selected_option == 3): #put
 							dir_name = input('Ingrese el path del archivo a subir: ')
-						elif(selected_option == 4) #get						
+							file_name = input('Nombre de nuevo archivo: ')
+						elif(selected_option == 4): #get						
 							dir_name = input('Ingrese el nombre del archivo a bajar: ')
-						elif(selected_option == 5) #rm file						
+							file_name = input('Ingrese el nombre del nuevo archivo: ')
+						elif(selected_option == 5): #rm file						
 							dir_name = input('Ingrese el nombre del archivo a eliminar: ')
-						elif(selected_option == 6) #rmdir
+						elif(selected_option == 6): #rmdir
 							dir_name = input('Ingrese el nombre del directorio a eliminar: ')
-						elif(selected_option == 7) #mkdir							
+						elif(selected_option == 7): #mkdir							
 							dir_name = input('Ingrese el path del directorio a crear: ')
-						elif(selected_option == 8) #pwd
+						elif(selected_option == 8): #pwd
 							print('Me encuentro en: ')
-						elif(selected_option == 9) #exit
+						elif(selected_option == 9): #exit
 							print('Log off...')
+							break
 
 						client_socket.sendall(str(selected_option).encode('ascii'))
-						if(selected_option in op_con_dirs)
+						if(selected_option in op_con_dirs):
 							client_socket.sendall(dir_name.encode('ascii'))
 
+						data_con = client_socket.recv(1024)
+						print(str(data_con.decode('ascii')))
 		finally:
 			client_socket.close()
-
 	elif (opcion == 3):
 		try:
 			client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket

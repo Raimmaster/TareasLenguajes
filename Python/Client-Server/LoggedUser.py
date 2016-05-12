@@ -60,7 +60,7 @@ class LoggedUser:
 
 		return False
 
-	def getCurrentDirName(): #pwd, optional
+	def getCurrentDirName(self): #pwd, optional
 		return self.current_dir
 
 	def exit(): #close server?
