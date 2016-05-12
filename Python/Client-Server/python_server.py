@@ -86,6 +86,8 @@ while option_received != 3: #3 salir
 						loggedUser.getCurrentDirName()
 					elif(option_received == 9) #exit
 						print('Logging user off...')	
+						mensaje_enviar = 'Log Off:'
+						client_socket.sendall(mensaje_enviar.encode('ascii'))								
 	finally:			
 		print('Ha acabado.')
 
