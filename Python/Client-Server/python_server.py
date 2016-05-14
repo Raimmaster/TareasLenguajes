@@ -43,10 +43,10 @@ option_received = 0
 op_con_dirs = (1, 5, 6, 7)
 
 while option_received != 3: #3 salir
-	try:
+	try:		
 		client_socket, addr = server_socket.accept() #get connection
 		print("Obtuve conexion de dir %s" % str(addr))	
-		option_received = int(str(client_socket.recv(1024), 'ascii'))
+		option_received = int(str(client_socket.recv(1024).decode('ascii')))
 		if(option_received == 1): #para ingresar usuario
 			mensaje_enviar = 'Ingresar usuario:'
 			client_socket.sendall(mensaje_enviar.encode('ascii'))			
@@ -76,7 +76,7 @@ while option_received != 3: #3 salir
 					
 					if(option_received == 3 or option_received == 4):
 						print("Opcion: " + str(option_received))
-						file_name = str(client_socket.recv(1024).decode('utf-8'))
+						file_name = str(client_socket.recv(1024).decode('ascii'))
 
 					if(option_received == 1):#cd
 						loggedUser.changeDirectory(dir_name)
@@ -126,4 +126,5 @@ while option_received != 3: #3 salir
 
 exit()	
 server_socket.close()
+client_socket.close()
 print('Adios')

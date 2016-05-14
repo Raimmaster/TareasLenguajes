@@ -12,7 +12,7 @@ class LoggedUser:
 		self.logged = True
 
 	def changeDirectory(self, new_dir): #cd
-		own_dir = 'Usuarios/' + username
+		own_dir = 'Usuarios/' + self.username
 		if (new_dir == own_dir):
 			print('Ya se encuentra en este directorio.')
 		elif(new_dir == '..'):
@@ -20,13 +20,15 @@ class LoggedUser:
 			self.prev_dir = self.current_dir
 			return self.current_dir
 		else:
-			files_dirs = os.listdir()
-			if(new_dir in files_dirs and os.path.isdir(new_dir)):
+			files_dirs = os.listdir(self.current_dir)
+			el_dir = self.current_dir + '/' + new_dir
+			if(new_dir in files_dirs and os.path.isdir(el_dir)):
+				print('my dir new')
 				self.prev_dir = self.current_dir
 				self.current_dir = self.prev_dir + "/" + new_dir
 
 	def listFiles(self): #ls		
-		for file in os.listdir():
+		for file in os.listdir(self.current_dir):
 			if(os.path.isdir(file)):
 				print ("* %s " % file)
 			else:		
@@ -39,7 +41,8 @@ class LoggedUser:
 		return
 
 	def removeFile(self, filename): #remove file
-		os.remove(filename)
+		file_to_remove = self.current_dir + '/' + filename
+		os.remove(file_to_remove)
 		return
 
 	def removeDirectory(self, dirname, username): #remove directory and all its files

@@ -3,9 +3,16 @@
 # -*- coding: utf-8 -*-
 
 #
+import sys
+import time
 from socket import *
-#import socket
 
+#update buffer in Python3
+if sys.version_info > (3,):
+	buffer = memoryview
+
+
+#import socket
 opcion = 0
 logged_options = ('1. cd', '2. ls', '3. put (file)', '4. get', '5. rm file', '6. rmdir dir', '7. mkdir dir', '8. pwd', '9. Salir')
 while (opcion != 3):
@@ -85,8 +92,7 @@ while (opcion != 3):
 							dir_name = input('Ingrese el path del archivo a subir: ')
 							file_name = input('Nombre de nuevo archivo: ')
 						elif(selected_option == 4): #get						
-							dir_name = input('Ingrese el nombre del archivo a bajar: ')
-							file_name = input('Ingrese el nombre del nuevo archivo: ')
+ 							file_name = input('Ingrese el nombre del nuevo archivo: ')
 						elif(selected_option == 5): #rm file						
 							dir_name = input('Ingrese el nombre del archivo a eliminar: ')
 						elif(selected_option == 6): #rmdir
@@ -105,7 +111,9 @@ while (opcion != 3):
 
 						#code for creating files 
 						if(selected_option == 3):
-							client_socket.sendall(((file_name)).encode('utf-8'))
+							time.sleep(1)
+							file_name = buffer(file_name.encode())
+							client_socket.sendall(((file_name)))	
 							f_send = open (dir_name, "rb") 
 							bytes_data = f_send.read(1024)
 							while (bytes_data):
@@ -115,11 +123,11 @@ while (opcion != 3):
 							f_send.close()
 							print('Archivo enviado')
 							#client_socket.shutdown(socket.SHUT_WR)
-							client_socket.close()
-							op = 0
+							client_socket.shutdown(1)
+							#op = 2
 
 						data_con = str(client_socket.recv(1024).decode('ascii'))
-						print(data_con)
+						print(data_con)							
 		finally:
 			client_socket.close()
 	elif (opcion == 3):
