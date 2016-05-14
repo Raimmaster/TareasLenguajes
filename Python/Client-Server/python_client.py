@@ -3,17 +3,8 @@
 # -*- coding: utf-8 -*-
 
 #
-
-#time client program
 from socket import *
 #import socket
-#tm = client_socket.recv(1024) #recibir no más de 1 KB
-
-#print("El tiempo es %s" % tm.decode('ascii'))
-#salir_op = input("Salir? Y/N ")
-
-#if(salir_op == "Y"):
-#	client_socket.close()
 
 opcion = 0
 logged_options = ('1. cd', '2. ls', '3. put (file)', '4. get', '5. rm file', '6. rmdir dir', '7. mkdir dir', '8. pwd', '9. Salir')
@@ -106,12 +97,13 @@ while (opcion != 3):
 							print('Me encuentro en: ')
 						elif(selected_option == 9): #exit
 							print('Log off...')
-							break
+							#break
 
 						client_socket.sendall(str(selected_option).encode('ascii'))
 						if(selected_option in op_con_dirs):
 							client_socket.sendall(dir_name.encode('ascii'))
 
+						#code for creating files 
 						if(selected_option == 3):
 							client_socket.sendall(((file_name)).encode('utf-8'))
 							f_send = open (dir_name, "rb") 
@@ -126,8 +118,8 @@ while (opcion != 3):
 							client_socket.close()
 							op = 0
 
-						data_con = client_socket.recv(1024)
-						print(str(data_con.decode('ascii')))
+						data_con = str(client_socket.recv(1024).decode('ascii'))
+						print(data_con)
 		finally:
 			client_socket.close()
 	elif (opcion == 3):

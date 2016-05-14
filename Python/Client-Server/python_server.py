@@ -11,11 +11,11 @@ import os
 from socket import *
 
 def createConnection():
-	#crear/aceptar conexión para el usuario
+	#crear aceptar conexion para el usuario
 	return
 
 def closeConnection(): #exit?
-	#logging out, cerrar conexión para el usuario
+	#logging out, cerrar conexion para el usuario
 	return
 
 def exit(): #close server?
@@ -69,7 +69,7 @@ while option_received != 3: #3 salir
 				dir_name = ''
 				file_name = ''
 				while (True):
-					option_received = int(str(client_socket.recv(1024), 'ascii'))
+					option_received = int(str(client_socket.recv(1024).decode('ascii')))
 					print('Sono qui')
 					if(option_received in op_con_dirs):
 						dir_name = str(client_socket.recv(1024).decode('ascii'))
@@ -117,7 +117,10 @@ while option_received != 3: #3 salir
 						print('Logging user off...')	
 						mensaje_enviar = 'Log Off:'
 					
-					client_socket.sendall(mensaje_enviar.encode('ascii'))								
+					client_socket.sendall(mensaje_enviar.encode('ascii'))	
+
+					if(option_received == 9):
+						break							
 	finally:			
 		print('Ha acabado.')
 
