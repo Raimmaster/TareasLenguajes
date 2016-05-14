@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-
-# -*- coding: utf-8 -*-
-
-#
-
 import UsersManager
 import FileManager
 import LoggedUser
@@ -46,7 +40,7 @@ while option_received != 3: #3 salir
 	try:		
 		client_socket, addr = server_socket.accept() #get connection
 		print("Obtuve conexion de dir %s" % str(addr))	
-		option_received = int(str(client_socket.recv(1024).decode('ascii')))
+		option_received = int(str(client_socket.recv(1024), ('ascii')))
 		if(option_received == 1): #para ingresar usuario
 			mensaje_enviar = 'Ingresar usuario:'
 			client_socket.sendall(mensaje_enviar.encode('ascii'))			
@@ -69,7 +63,13 @@ while option_received != 3: #3 salir
 				dir_name = ''
 				file_name = ''
 				while (True):
+					if mensaje_enviar == 'Written':
+						print("Rebooting connection!")
+						client_socket.close()
+						client_socket, addr = server_socket.accept()
+
 					option_received = int(str(client_socket.recv(1024).decode('ascii')))
+
 					print('Sono qui')
 					if(option_received in op_con_dirs):
 						dir_name = str(client_socket.recv(1024).decode('ascii'))
@@ -80,8 +80,10 @@ while option_received != 3: #3 salir
 
 					if(option_received == 1):#cd
 						loggedUser.changeDirectory(dir_name)
+						mensaje_enviar = 'cd'
 					elif(option_received == 2): #ls
 						loggedUser.listFiles()
+						mensaje_enviar = 'ls' 
 					elif(option_received == 3): #put
 						dir_to_write = loggedUser.getCurrentDirName()
 
@@ -103,15 +105,20 @@ while option_received != 3: #3 salir
 						loggedUser.putFile(dir_name)
 					elif(option_received == 4): #get		
 						loggedUser.getFile(dir_name)
+						mensaje_enviar = 'get'
 					elif(option_received == 5): #rm file
 						loggedUser.removeFile(dir_name)
+						mensaje_enviar = 'rm'
 					elif(option_received == 6): #rmdir
 						loggedUser.removeDirectory(dir_name)
+						mensaje_enviar = 'rmdir'
 					elif(option_received == 7): #mkdir			
 						loggedUser.createDirectory(dir_name)
+						mensaje_enviar = 'mkdir'
 					elif(option_received == 8): #pwd
 						estoy = loggedUser.getCurrentDirName()
 						print(estoy)
+						mensaje_enviar = 'pwd'
 						client_socket.sendall(estoy.encode('ascii'))
 					elif(option_received == 9): #exit
 						print('Logging user off...')	
@@ -123,6 +130,7 @@ while option_received != 3: #3 salir
 						break							
 	finally:			
 		print('Ha acabado.')
+		client_socket.close()
 
 exit()	
 server_socket.close()

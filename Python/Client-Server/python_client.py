@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-
-# -*- coding: utf-8 -*-
-
-#
 import sys
 import time
 from socket import *
@@ -71,12 +66,22 @@ while (opcion != 3):
 				client_socket.sendall(username.encode('ascii'))							
 				client_socket.sendall(password.encode('ascii'))
 				mensaje = client_socket.recv(1024)
+
+				#client_socket.close()
 				if (mensaje.decode('ascii') == 'Dir User:'):#conectado
-					print ("Conexion establecida!")
-					
+					print ("Conexion establecida!")		
+
 					data_con = ''
 					op_con_dirs = (1, 5, 6, 7)
 					while data_con != 'Log Off:':
+
+						if data_con == 'Written':
+							print("Reboot!")
+							client_socket.close()
+							client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
+							client_socket.connect(('localhost', 8888)) #conectar al servidor
+
+
 						print('Opciones: \n')
 						for indices in logged_options:
 							print(indices)
@@ -103,7 +108,6 @@ while (opcion != 3):
 							print('Me encuentro en: ')
 						elif(selected_option == 9): #exit
 							print('Log off...')
-							#break
 
 						client_socket.sendall(str(selected_option).encode('ascii'))
 						if(selected_option in op_con_dirs):
