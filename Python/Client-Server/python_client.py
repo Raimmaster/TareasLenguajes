@@ -76,7 +76,7 @@ while (opcion != 3):
 					while data_con != 'Log Off:':
 
 						if data_con == 'Written':
-							print("Reboot!")
+							#print("Reboot!")
 							client_socket.close()
 							client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
 							client_socket.connect(('localhost', 8888)) #conectar al servidor
@@ -126,9 +126,10 @@ while (opcion != 3):
 
 							f_send.close()
 							print('Archivo enviado')
-							#client_socket.shutdown(socket.SHUT_WR)
 							client_socket.shutdown(1)
-							#op = 2
+
+						if(selected_option == 8):
+							print(str(client_socket.recv(1024).decode('ascii')))
 
 						data_con = str(client_socket.recv(1024).decode('ascii'))
 						print(data_con)							

@@ -1,6 +1,7 @@
 import UsersManager
 import FileManager
 import LoggedUser
+import time
 import os
 from socket import *
 
@@ -64,7 +65,7 @@ while option_received != 3: #3 salir
 				file_name = ''
 				while (True):
 					if mensaje_enviar == 'Written':
-						print("Rebooting connection!")
+						#print("Rebooting connection!")
 						client_socket.close()
 						client_socket, addr = server_socket.accept()
 
@@ -120,6 +121,7 @@ while option_received != 3: #3 salir
 						print(estoy)
 						mensaje_enviar = 'pwd'
 						client_socket.sendall(estoy.encode('ascii'))
+						time.sleep(0.3)
 					elif(option_received == 9): #exit
 						print('Logging user off...')	
 						mensaje_enviar = 'Log Off:'
