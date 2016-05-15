@@ -147,7 +147,7 @@ while (opcion != 3):
 							client_socket.sendall(file_name.encode('ascii'))
 							#get the size to be reading
 							file_size = int(str(client_socket.recv(1024).decode('ascii')))
-							print('Size: ' + str(file_size))
+							#print('Size: ' + str(file_size))
 							reading_size = 1024
 							size_read = 0	
 							while True:
@@ -166,12 +166,12 @@ while (opcion != 3):
 									while(data):
 										n_file.write(data)
 										cant_read = min(file_size - size_read, reading_size)
-										print('Leer: ' + str(cant_read))										
+										#print('Leer: ' + str(cant_read))										
 										if(cant_read == 0):
 											break
 										data = client_socket.recv(cant_read)
 										size_read = size_read + len(data)
-										print('Leido: ' + str(size_read))
+										#print('Leido: ' + str(size_read))
 									n_file.close()									
 								break
 
