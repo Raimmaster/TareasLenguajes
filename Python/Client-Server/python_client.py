@@ -113,9 +113,9 @@ while (opcion != 3):
 						if(selected_option in op_con_dirs):
 							client_socket.sendall(dir_name.encode('ascii'))
 
-						#code for creating files 
+						#code for sending files 
 						if(selected_option == 3):
-							time.sleep(1)
+							time.sleep(0.3)
 							file_name = buffer(file_name.encode())
 							client_socket.sendall(((file_name)))	
 							f_send = open (dir_name, "rb") 
@@ -128,7 +128,7 @@ while (opcion != 3):
 							print('Archivo enviado')
 							client_socket.shutdown(1)
 
-						if(selected_option == 8):
+						if(selected_option == 8):#receive pwd
 							print(str(client_socket.recv(1024).decode('ascii')))
 
 						data_con = str(client_socket.recv(1024).decode('ascii'))

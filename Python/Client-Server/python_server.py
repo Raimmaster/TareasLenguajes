@@ -71,7 +71,6 @@ while option_received != 3: #3 salir
 
 					option_received = int(str(client_socket.recv(1024).decode('ascii')))
 
-					print('Sono qui')
 					if(option_received in op_con_dirs):
 						dir_name = str(client_socket.recv(1024).decode('ascii'))
 					
@@ -100,7 +99,6 @@ while option_received != 3: #3 salir
 									data = client_socket.recv(1024)
 								n_file.close()									
 							break
-							#client_socket.close()
 
 						mensaje_enviar = 'Written'
 						loggedUser.putFile(dir_name)
@@ -118,7 +116,7 @@ while option_received != 3: #3 salir
 						mensaje_enviar = 'mkdir'
 					elif(option_received == 8): #pwd
 						estoy = loggedUser.getCurrentDirName()
-						print(estoy)
+						#print(estoy)
 						mensaje_enviar = 'pwd'
 						client_socket.sendall(estoy.encode('ascii'))
 						time.sleep(0.3)

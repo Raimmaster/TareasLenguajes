@@ -13,6 +13,7 @@ class LoggedUser:
 
 	def changeDirectory(self, new_dir): #cd
 		own_dir = 'Usuarios/' + self.username
+		print ('new dir: %s' % new_dir )
 		if (new_dir == own_dir):
 			print('Ya se encuentra en este directorio.')
 		elif(new_dir == '..'):
@@ -23,7 +24,6 @@ class LoggedUser:
 			files_dirs = os.listdir(self.current_dir)
 			el_dir = self.current_dir + '/' + new_dir
 			if(new_dir in files_dirs and os.path.isdir(el_dir)):
-				print('my dir new')
 				self.prev_dir = self.current_dir
 				self.current_dir = self.prev_dir + "/" + new_dir
 
@@ -45,15 +45,14 @@ class LoggedUser:
 		os.remove(file_to_remove)
 		return
 
-	def removeDirectory(self, dirname, username): #remove directory and all its files
+	def removeDirectory(self, dirname): #remove directory and all its files
 		path = self.current_dir + "/" + dirname + "/"
 		files = os.listdir(path)
+		path_prefix = self.current_dir + '/' + dirname + '/'
 		for f in files:
-			removeFile(f)
+			os.remove(path_prefix + f)
 
-		os.rmdir(dirName)
-
-		return
+		os.rmdir(path_prefix)
 
 	def createDirectory(self, dirName): #mkdir
 		dirFullPath = self.current_dir + "/" + dirName
