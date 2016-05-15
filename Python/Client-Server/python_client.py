@@ -1,5 +1,6 @@
-import sys
 import time
+import sys
+import os
 from socket import *
 
 #update buffer in Python3
@@ -10,6 +11,10 @@ if sys.version_info > (3,):
 #import socket
 opcion = 0
 logged_options = ('1. cd', '2. ls', '3. put (file)', '4. get', '5. rm file', '6. rmdir dir', '7. mkdir dir', '8. pwd', '9. Salir')
+#connect to server
+client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
+client_socket.connect(('localhost', 8888)) #conectar al servidor
+
 while (opcion != 3):
 	print('')
 	print("1. Crear usuario. ")
@@ -20,18 +25,16 @@ while (opcion != 3):
 	if (opcion == 1):
 		try:
 			#conectar
-			client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
-			client_socket.connect(('localhost', 8888)) #conectar al servidor
+			#client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
+			#client_socket.connect(('localhost', 8888)) #conectar al servidor
 
 			client_socket.sendall(str(opcion).encode('ascii'))
-			#response_received = str(client_socket.recv(1024),'utf-8')
 
-			print("File descriptor: ", client_socket.fileno())
-			print("Remote address: ", client_socket.getpeername())
-			print("My address: ", client_socket.getsockname())
+			#print("File descriptor: ", client_socket.fileno())
+			#print("Remote address: ", client_socket.getpeername())
+			#print("My address: ", client_socket.getsockname())
 
 			while True:
-				#print("Dude!")
 				response = client_socket.recv(1024)
 				print(response.decode('ascii'))
 				if response.decode('ascii') =='Ingresar usuario:':
@@ -43,17 +46,17 @@ while (opcion != 3):
 					mensaje = client_socket.recv(1024)
 					if (mensaje.decode('ascii') == 'Usuario creado'):
 						print ("Perfect!")
-						op = 0 
 						break
 								
 		finally:
-			client_socket.close()
+			#client_socket.close()
+			print('')
 
 	elif (opcion == 2):
 		try:
 			#conectar
-			client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
-			client_socket.connect(('localhost', 8888)) #conectar al servidor
+			#client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
+			#client_socket.connect(('localhost', 8888)) #conectar al servidor
 
 			client_socket.sendall(str(opcion).encode('ascii'))
 			response = client_socket.recv(1024)
@@ -75,11 +78,10 @@ while (opcion != 3):
 					op_con_dirs = (1, 5, 6, 7)
 					while data_con != 'Log Off:':
 
-						if data_con == 'Written' or data_con == 'Sent':
-							#print("Reboot!")
-							client_socket.close()
-							client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
-							client_socket.connect(('localhost', 8888)) #conectar al servidor
+						#if data_con == 'Written' or data_con == 'Sent':						
+						#	client_socket.close()
+						#	client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
+						#	client_socket.connect(('localhost', 8888)) #conectar al servidor
 
 
 						print('Opciones: \n')
@@ -120,9 +122,17 @@ while (opcion != 3):
 						#code for sending files 
 						elif(selected_option == 3):
 							time.sleep(0.3)
+							#file info
 							file_name = buffer(file_name.encode())
-							client_socket.sendall(((file_name)))	
+							file_info = os.stat(dir_name)
+							file_size = file_info.st_size
+							#send file and its size
+							client_socket.sendall(file_name)
+							time.sleep(0.2)
+							client_socket.send(str(file_size).encode('ascii'))
+							#open file	
 							f_send = open (dir_name, "rb") 
+							time.sleep(0.2)
 							bytes_data = f_send.read(1024)
 							while (bytes_data):
 							    client_socket.sendall(bytes_data)
@@ -130,21 +140,38 @@ while (opcion != 3):
 
 							f_send.close()
 							print('Archivo enviado')
-							client_socket.shutdown(1)
+							#client_socket.shutdown(1)
 
 						#code for reading files
 						elif(selected_option == 4): #get
-							client_socket.sendall(file_name.encode('ascii'))	
+							client_socket.sendall(file_name.encode('ascii'))
+							#get the size to be reading
+							file_size = int(str(client_socket.recv(1024).decode('ascii')))
+							print('Size: ' + str(file_size))
+							reading_size = 1024
+							size_read = 0	
 							while True:
 								path_write = file_path + '/' + file_name
-								print(path_write)
+								#print(path_write)
 								n_file = open(path_write, 'wb')
 								while(not n_file.closed):
 									#recibimos y escribimos
-									data = client_socket.recv(1024)
+									if(file_size < reading_size):
+										cant_read = file_size
+									else:
+										cant_read = reading_size
+									data = client_socket.recv(cant_read)
+									size_read = len(data)
+
 									while(data):
 										n_file.write(data)
-										data = client_socket.recv(1024)
+										cant_read = min(file_size - size_read, reading_size)
+										print('Leer: ' + str(cant_read))										
+										if(cant_read == 0):
+											break
+										data = client_socket.recv(cant_read)
+										size_read = size_read + len(data)
+										print('Leido: ' + str(size_read))
 									n_file.close()									
 								break
 
@@ -158,14 +185,16 @@ while (opcion != 3):
 							data_con = 'Sent'
 						print(data_con)							
 		finally:
-			client_socket.close()
+			#client_socket.close()
+			print('')
 	elif (opcion == 3):
-		try:
-			client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
-			client_socket.connect(('localhost', 8888)) #conectar al servidor
+		#try:
+			#client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
+			#client_socket.connect(('localhost', 8888)) #conectar al servidor
 
-			client_socket.sendall(str(opcion).encode('ascii'))
+			#client_socket.sendall(str(opcion).encode('ascii'))
 			
-		finally:
-			client_socket.close()
+		#finally:
+			#client_socket.close()
+		client_socket.close()
 		print("Saliendo...")

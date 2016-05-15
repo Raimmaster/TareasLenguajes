@@ -7,7 +7,7 @@ class LoggedUser:
 		self.current_dir = 'Usuarios/' + username
 		#crear carpeta personal si no existe
 		if(not os.path.isdir(self.current_dir)):
-				os.mkdir(dirName)
+				os.mkdir('Usuarios/' + username)
 		self.prev_dir = self.current_dir
 		self.logged = True
 
@@ -26,12 +26,6 @@ class LoggedUser:
 			if(new_dir in files_dirs and os.path.isdir(el_dir)):
 				self.prev_dir = self.current_dir
 				self.current_dir = self.prev_dir + "/" + new_dir
-
-    #sb = []
-    #for i in range(30):
-    #    sb.append("abcdefg"[i%7])
-
-    #return ''.join(sb)
 
 	def listFiles(self): #ls		
 		f_names = []
