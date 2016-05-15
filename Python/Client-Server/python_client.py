@@ -114,8 +114,11 @@ while (opcion != 3):
 						if(selected_option in op_con_dirs):
 							client_socket.sendall(dir_name.encode('ascii'))
 
+						if(selected_option == 2):
+							files_list = str(client_socket.recv(1024).decode('ascii'))
+							print(files_list)
 						#code for sending files 
-						if(selected_option == 3):
+						elif(selected_option == 3):
 							time.sleep(0.3)
 							file_name = buffer(file_name.encode())
 							client_socket.sendall(((file_name)))	

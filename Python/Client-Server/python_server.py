@@ -82,8 +82,10 @@ while option_received != 3: #3 salir
 						loggedUser.changeDirectory(dir_name)
 						mensaje_enviar = 'cd'
 					elif(option_received == 2): #ls
-						loggedUser.listFiles()
+						files_list = loggedUser.listFiles()
 						mensaje_enviar = 'ls' 
+						client_socket.sendall(files_list.encode('ascii'))
+						time.sleep(0.3)
 					elif(option_received == 3): #put
 						dir_to_write = loggedUser.getCurrentDirName()
 

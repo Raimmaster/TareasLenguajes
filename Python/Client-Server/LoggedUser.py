@@ -27,12 +27,23 @@ class LoggedUser:
 				self.prev_dir = self.current_dir
 				self.current_dir = self.prev_dir + "/" + new_dir
 
+    #sb = []
+    #for i in range(30):
+    #    sb.append("abcdefg"[i%7])
+
+    #return ''.join(sb)
+
 	def listFiles(self): #ls		
+		f_names = []
 		for file in os.listdir(self.current_dir):
-			if(os.path.isdir(file)):
+			if(os.path.isdir(self.current_dir + '/' + file)):
+				f_names.append('*: ' + file + "\n")
 				print ("* %s " % file)
 			else:		
+				f_names.append(file + "\n")
 				print ("- %s " % file)
+
+		return ''.join(f_names)
 
 	def putFile(self, filename): #get file from client, save in server
 		return
