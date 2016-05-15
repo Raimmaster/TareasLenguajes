@@ -64,7 +64,7 @@ while option_received != 3: #3 salir
 				dir_name = ''
 				file_name = ''
 				while (True):
-					if mensaje_enviar == 'Written':
+					if mensaje_enviar == 'Written' or mensaje_enviar == 'Sent':
 						#print("Rebooting connection!")
 						client_socket.close()
 						client_socket, addr = server_socket.accept()
@@ -101,10 +101,25 @@ while option_received != 3: #3 salir
 							break
 
 						mensaje_enviar = 'Written'
-						loggedUser.putFile(dir_name)
+						#loggedUser.putFile(dir_name)
 					elif(option_received == 4): #get		
-						loggedUser.getFile(dir_name)
-						mensaje_enviar = 'get'
+						file_dir = loggedUser.getCurrentDirName()
+						#file_name = str(client_socket.recv(1024).decode('ascii'))
+						file_path = file_dir + '/' + file_name
+
+						time.sleep(0.3)
+
+						f_send = open (file_path, "rb") 
+						bytes_data = f_send.read(1024)
+						while (bytes_data):
+						    client_socket.sendall(bytes_data)
+						    bytes_data = f_send.read(1024)
+
+						f_send.close()
+						print('Archivo enviado')
+						client_socket.close()
+
+						mensaje_enviar = 'Sent'
 					elif(option_received == 5): #rm file
 						loggedUser.removeFile(dir_name)
 						mensaje_enviar = 'rm'
@@ -124,7 +139,8 @@ while option_received != 3: #3 salir
 						print('Logging user off...')	
 						mensaje_enviar = 'Log Off:'
 					
-					client_socket.sendall(mensaje_enviar.encode('ascii'))	
+					if(option_received != 4):
+						client_socket.sendall(mensaje_enviar.encode('ascii'))	
 
 					if(option_received == 9):
 						break							

@@ -75,7 +75,7 @@ while (opcion != 3):
 					op_con_dirs = (1, 5, 6, 7)
 					while data_con != 'Log Off:':
 
-						if data_con == 'Written':
+						if data_con == 'Written' or data_con == 'Sent':
 							#print("Reboot!")
 							client_socket.close()
 							client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
@@ -98,6 +98,7 @@ while (opcion != 3):
 							file_name = input('Nombre de nuevo archivo: ')
 						elif(selected_option == 4): #get						
  							file_name = input('Ingrese el nombre del nuevo archivo: ')
+ 							file_path = input('Ingrese el path donde estara: ')
 						elif(selected_option == 5): #rm file						
 							dir_name = input('Ingrese el nombre del archivo a eliminar: ')
 						elif(selected_option == 6): #rmdir
@@ -128,10 +129,30 @@ while (opcion != 3):
 							print('Archivo enviado')
 							client_socket.shutdown(1)
 
-						if(selected_option == 8):#receive pwd
+						#code for reading files
+						elif(selected_option == 4): #get
+							client_socket.sendall(file_name.encode('ascii'))	
+							while True:
+								path_write = file_path + '/' + file_name
+								print(path_write)
+								n_file = open(path_write, 'wb')
+								while(not n_file.closed):
+									#recibimos y escribimos
+									data = client_socket.recv(1024)
+									while(data):
+										n_file.write(data)
+										data = client_socket.recv(1024)
+									n_file.close()									
+								break
+
+						elif(selected_option == 8):#receive pwd
 							print(str(client_socket.recv(1024).decode('ascii')))
 
-						data_con = str(client_socket.recv(1024).decode('ascii'))
+						#read the final message
+						if (selected_option != 4):
+							data_con = str(client_socket.recv(1024).decode('ascii'))
+						else:
+							data_con = 'Sent'
 						print(data_con)							
 		finally:
 			client_socket.close()
