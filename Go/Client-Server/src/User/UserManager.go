@@ -9,7 +9,6 @@ func UserExists(username string) (password string){
 		return ""
 	}
 
-
 	return 
 }
 
