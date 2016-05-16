@@ -1,5 +1,9 @@
 package User
 
+import (
+	"encoding/json"
+)
+
 var usersMap = make(map[string]string)
 
 func UserExists(username string) (password string){
