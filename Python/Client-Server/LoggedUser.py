@@ -37,7 +37,7 @@ class LoggedUser:
 				f_names.append(file + "\n")
 				print ("- %s " % file)
 
-		return ''.join(f_names)
+		return ''.join(f_names) if len(f_names) > 0 else " " 
 
 	def putFile(self, filename): #get file from client, save in server
 		return

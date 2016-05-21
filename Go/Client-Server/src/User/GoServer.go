@@ -20,7 +20,6 @@ func NewUserManager() *UserManager {
 	return u_Manager
 }
 
-
 func UserExists(username string) (password string){
 	password, ok := UsersMap[username]
 
