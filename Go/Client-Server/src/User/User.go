@@ -1,7 +1,7 @@
 package User
 
 import (
-	"ftm"
+	"fmt"
 	"os"
 	"io/ioutil"
 	"log"
@@ -25,12 +25,13 @@ func NewUser(user, password string) *User {
 }
 
 func (user *User) RemoveFile(filename string) bool{
-	file_to_remove = user.CurrentDir + '/' filename
-	file_stat, error := os.Stat(dirToCheck + file.Name())			
+	file_to_remove := user.CurrentDir + "/" + filename
+	file_stat, error := os.Stat(file_to_remove)			
 
 	if error != nil{
 		return false
 	}
+
 	if file_stat.IsDir(){
 		return false //es directorio; borrar
 	}
@@ -45,7 +46,7 @@ func (user *User) RemoveFile(filename string) bool{
 }
 
 func (user *User) RemoveDir(filename string) bool{
-	dir_to_remove = user.CurrentDir + '/' filename
+	dir_to_remove := user.CurrentDir + "/" + filename
 	err := os.RemoveAll(dir_to_remove)
 
 	if err != nil{
@@ -56,12 +57,13 @@ func (user *User) RemoveDir(filename string) bool{
 }
 
 func CreateDir(user *User, dirname string) bool{
-	total_dirname = user.CurrentDir + "/" + dirname
+	total_dirname := user.CurrentDir + "/" + dirname
 
-	err := os.MkDirAll(total_dirname, 0777)
+	err := os.MkdirAll(total_dirname, 0777)
 
-	if(err != nil)
+	if(err != nil){		
 		return false
+	}
 
 	return true
 }
@@ -71,6 +73,11 @@ func ListFiles(user *User) string{//ls
 	files_names = "\n"
 
 	files, err := ioutil.ReadDir(user.CurrentDir)
+	
+	if err != nil{
+		return " "
+	}
+
 	for _, file := range files {
 		files_names += file.Name() + "\n"
 	}
@@ -85,11 +92,11 @@ func GetCurrentDirName(user *User) string{
 func (usuario *User) ChangeDir(nombreDirectorio string) bool {//cd
 	//hacer lo que tenga que hacer
 	//user.User.ChangeDir("music")
-	own_dir := "Usuarios/" + usuario.Username
+	//own_dir := "Usuarios/" + usuario.Username
 
 	if(nombreDirectorio == "..") {//if I have to return
-		usuario.CurrentDir = self.PrevDir
-		self.PrevDir = self.CurrentDir
+		usuario.CurrentDir = usuario.PrevDir
+		usuario.PrevDir = usuario.CurrentDir
 		return true
 	} else { 
 		files, err := ioutil.ReadDir(usuario.CurrentDir)
@@ -100,8 +107,8 @@ func (usuario *User) ChangeDir(nombreDirectorio string) bool {//cd
 			return false
 		}
 
-		dirToCheck = usuario.CurrentDir + "/"
-		//list all files, iterate through them
+		dirToCheck := usuario.CurrentDir + "/"
+ 		//list all files, iterate through them
 		for _, file := range files {
 			file_stat, err := os.Stat(dirToCheck + file.Name())
 			
