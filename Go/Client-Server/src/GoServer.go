@@ -152,7 +152,9 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  							files_list = loggedUser.ListFiles()
 	  							mensaje_enviar = "ls"
 	  							cli_sock.Write([]byte(mensaje_enviar))
+	  							time.Sleep(100 * time.Millisecond)
 	  						case 3: //put
+	  							
 	  						case 4: //get
 	  						case 5: //rm file
 	  						case 6: //rmdir
