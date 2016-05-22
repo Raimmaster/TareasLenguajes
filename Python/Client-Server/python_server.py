@@ -171,6 +171,7 @@ def client_thread(client_socket, addr):
 		#server_socket.close()
 		client_socket.close()
 		print('Adios')
+		break
 
 while True:
 	cliente_socket, addre = server_socket.accept() #get connection

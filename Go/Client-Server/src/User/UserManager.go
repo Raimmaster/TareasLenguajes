@@ -56,7 +56,7 @@ func WriteToUsersFile() bool{
 		return false
 	}
 
-	f_users, err := os.Create("Usuarios.txt")
+	f_users, err := os.Create("usuarios.txt")
 	defer f_users.Close()
 
 	if(err != nil){

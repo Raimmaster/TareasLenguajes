@@ -56,7 +56,7 @@ func (user *User) RemoveDir(filename string) bool{
 	return true	
 }
 
-func CreateDir(user *User, dirname string) bool{
+func (user *User) CreateDir(dirname string) bool{
 	total_dirname := user.CurrentDir + "/" + dirname
 
 	err := os.MkdirAll(total_dirname, 0777)
@@ -68,7 +68,7 @@ func CreateDir(user *User, dirname string) bool{
 	return true
 }
 
-func ListFiles(user *User) string{//ls
+func (user *User) ListFiles() string{//ls
 	var files_names string
 	files_names = "\n"
 
@@ -85,7 +85,7 @@ func ListFiles(user *User) string{//ls
 	return files_names		
 } 
 
-func GetCurrentDirName(user *User) string{
+func (user *User) GetCurrentDirName() string{
 	return user.CurrentDir
 }
 
@@ -102,7 +102,7 @@ func (usuario *User) ChangeDir(nombreDirectorio string) bool {//cd
 		files, err := ioutil.ReadDir(usuario.CurrentDir)
 
 		if err != nil {
-			log.Fatal(err)
+			log	.Fatal(err)
 
 			return false
 		}
