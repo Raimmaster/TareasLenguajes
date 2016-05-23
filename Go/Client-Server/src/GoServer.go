@@ -4,7 +4,7 @@ import (
 	//"encoding/json"
 	"fmt"
 	//"io/ioutil"
-	//"os"
+	"os"
 	//"encoding/gob"
 	"net"
  	"log"
@@ -67,6 +67,14 @@ func checkOptions(option int) bool {
 	}
 
 	return false
+}
+
+func Min(x, y int) int {
+    if x < y {
+        return x
+    }
+
+    return y
 }
 
 func handleClientThreadConnection(cli_sock net.Conn){
@@ -134,16 +142,34 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  					valor_menu, _, err := reader.ReadRune()
 	  					optionReceived = int(valor_menu)
 
-	  					if checkOptions(option) {
-	  						dir_name = reader.ReadString('\n')
-	  					}
-
 	  					if err != nil {
 	  						fmt.Println(err)
 	  						optionReceived = 2
 	  						continue
 	  					}	  					
 
+	  					if checkOptions(optionReceived) {
+	  						dir_name, err = reader.ReadString('\n')
+	  						if err != nil {
+	  							fmt.Println(err)
+	  							continue
+	  						}
+	  					}
+
+	  					if optionReceived == 3 || optionReceived == 4 {
+	  						fmt.Println("Opcion 3 o 4")
+	  						file_name, err = reader.ReadString('\n')
+
+	  						if err != nil {
+	  							fmt.Println(err)
+	  							continue
+	  						}
+	  					}
+
+						//buffer size when reading or writing
+						reading_size := 1024
+						var cant_read int
+	  							
 	  					switch optionReceived {
 	  						case 1: //cd
 	  							loggedUser.ChangeDir(dir_name)
@@ -154,8 +180,65 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  							cli_sock.Write([]byte(mensaje_enviar))
 	  							time.Sleep(100 * time.Millisecond)
 	  						case 3: //put
+	  							dir_to_write := loggedUser.GetCurrentDirName()
+	  							val, err := reader.ReadString('\n')
 	  							
+	  							if err != nil {
+	  								fmt..Println(err)
+	  								continue
+	  							}
+
+	  							file_size := int(val)
+	  							size_read := 0
+
+	  							path_write := dir_to_write + "/" + file_name
+	  							n_file, error = os.Create(path_write)
+	  							defer n_file.Close()
+	  							
+	  							if file_size < reading_size{
+	  								cant_read = file_size	  								
+	  							}
+								else{									
+	  								cant_read = reading_size
+								}
+
+								//func (f *File) ReadAt(b []byte, off int64) (n int, err error)
+								var data [] byte
+								cant_read, _ = reader.Read(data)
+
+								for cant_read > 0 {
+									n_file.Write(data)
+									cant_read = Min(file_size - size_read, reading_size)
+									if cant_read == 0 {
+										break
+									}
+
+									cant_read, _ = reader.Read(data)
+								}
+
+								mensaje_enviar = "Written"
+								fmt.Println("Obtuve archivo")
 	  						case 4: //get
+	  							file_dir := loggedUser.GetCurrentDirName()
+	  							file_path := file_dir + "/" + file_name
+	  							file, err := os.Open(file_path)
+	  							defer file.Close()
+	  							file_info, err := file.Stat()
+	  							file_size := file_info.Size()	  							
+	  							time.Sleep(100 * time.Millisecond)
+	  							cli_sock.Write(file_size)	  							
+	  							time.Sleep(300 * time.Millisecond)
+	  							size_read := 0
+	  							cant_read = Min(file_size - size_read, reading_size)
+
+	  							data := make([]byte, cant_read)
+
+	  							data := file.Read()
+	  							for size_read > 0 {
+	  								
+	  								cli_sock.Write(data)
+
+	  							}
 	  						case 5: //rm file
 	  						case 6: //rmdir
 	  						case 7: //mkdir
