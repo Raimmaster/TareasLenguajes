@@ -231,24 +231,44 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  							size_read := 0
 	  							cant_read = Min(file_size - size_read, reading_size)
 
-	  							data := make([]byte, cant_read)
-
-	  							data := file.Read()
-	  							for size_read > 0 {
-	  								
+	  							for file_size > 0 {
+	  								data := make([]byte, Min(file_size, size_read))	
+	  								quant, _ := file.Read(data)  								
 	  								cli_sock.Write(data)
 
+	  								file_size -= quant
 	  							}
+
+	  							fmt.Println("Enviado")
+	  							mensaje_enviar = "Sent"
 	  						case 5: //rm file
+	  							loggedUser.RemoveFile(file_name)
+	  							mensaje_enviar = "rm"
 	  						case 6: //rmdir
+	  							loggedUser.RemoveDir(dir_name)
+	  							mensaje_enviar = "rmdir"
 	  						case 7: //mkdir
+	  							loggedUser.CreateDir(dir_name)
+	  							mensaje_enviar = "mkdir"
 	  						case 8: //pwd
+	  							estoy := loggedUser.GetCurrentDirName()
+	  							mensaje_enviar = "pwd"
+	  							cli_sock.Write([]byte(estoy))
+	  							time.Sleep(300 * time.Millisecond)
 	  						case 9: //exit
+	  							fmt.Println("Logging off user: ", loggedUser.Username)
+	  							mensaje_enviar = "Log off:"
+	  					}
+
+	  					if (optionReceived != 4) {
+	  						cli_sock.Write(mensaje_enviar)
+	  					}
+
+	  					if optionReceived == 9 {
+	  						break
 	  					}
 	  				}
 	  			}
-	  		case 3:
-
 	  	}
 
 	  	//opcion,err:= strconv.Atoi(strings.TrimSpace(string(message)))
@@ -257,5 +277,7 @@ func handleClientThreadConnection(cli_sock net.Conn){
 		optionReceived = 3
 	}
 
+	User.WriteToUsersFile()
 	cli_sock.Close()	
+	fmt.Println("Adios")	
 }
