@@ -139,6 +139,10 @@ func main(){
 										files_list, _ := bufio.NewReader(client_socket).ReadString('\n')
 										fmt.Println(files_list)
 									case 3://sending files
+										time.Sleep(3 * time.Millisecond)
+										file, _ := os.Open(dir_name)
+				  						defer file.Close()
+				  						file_info, _ := file.Stat()
 									case 4://reading file
 									case 8://receive pwd
 										pwd_mess, _ := bufio.NewReader(client_socket).ReadString('\n')
