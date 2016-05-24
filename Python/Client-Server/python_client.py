@@ -24,15 +24,7 @@ while (opcion != 3):
 
 	if (opcion == 1):
 		try:
-			#conectar
-			#client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
-			#client_socket.connect(('localhost', 8888)) #conectar al servidor
-
 			client_socket.sendall(str(opcion).encode('ascii'))
-
-			#print("File descriptor: ", client_socket.fileno())
-			#print("Remote address: ", client_socket.getpeername())
-			#print("My address: ", client_socket.getsockname())
 
 			while True:
 				response = client_socket.recv(1024)
@@ -54,9 +46,6 @@ while (opcion != 3):
 
 	elif (opcion == 2):
 		try:
-			#conectar
-			#client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
-			#client_socket.connect(('localhost', 8888)) #conectar al servidor
 
 			client_socket.sendall(str(opcion).encode('ascii'))
 			response = client_socket.recv(1024)
@@ -77,12 +66,6 @@ while (opcion != 3):
 					data_con = ''
 					op_con_dirs = (1, 5, 6, 7)
 					while data_con != 'Log Off:':
-
-						#if data_con == 'Written' or data_con == 'Sent':						
-						#	client_socket.close()
-						#	client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
-						#	client_socket.connect(('localhost', 8888)) #conectar al servidor
-
 
 						print('Opciones: \n')
 						for indices in logged_options:
@@ -188,13 +171,5 @@ while (opcion != 3):
 			#client_socket.close()
 			print('')
 	elif (opcion == 3):
-		#try:
-			#client_socket = socket(AF_INET, SOCK_STREAM) #crear TCP socket
-			#client_socket.connect(('localhost', 8888)) #conectar al servidor
-
-			#client_socket.sendall(str(opcion).encode('ascii'))
-			
-		#finally:
-			#client_socket.close()
 		client_socket.close()
 		print("Saliendo...")

@@ -126,9 +126,42 @@ func main(){
 								}
 
 								client_socket.Write([]byte(opInput))
+								//chequear si se debe enviar un dir name
+								for i := 0; i < DIRS_SIZE; i++ {
+									if selectedOption == opsConDirs[i] {
+										client_socket.Write([]byte(dir_name))
+										break
+									}
+								}
+
+								switch selectedOption {
+									case 2:
+										files_list, _ := bufio.NewReader(client_socket).ReadString('\n')
+										fmt.Println(files_list)
+									case 3://sending files
+									case 4://reading file
+									case 8://receive pwd
+										pwd_mess, _ := bufio.NewReader(client_socket).ReadString('\n')
+										fmt.Println(pwd_mess)
+									default: 
+										fmt.Print("")										
+								}
+
+								//final data
+								if selectedOption != 4 {
+									data_con, _ = bufio.NewReader(client_socket).ReadString('\n')
+								} else {
+									data_con = "Sent"
+								}
+
+								fmt.Println(data_con)
 							} 
 						}
 					}
+
+			case 3:
+				client_socket.Close()
+				fmt.Println("Saliendo...")
 		}
     }
 }
