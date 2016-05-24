@@ -2,15 +2,16 @@ package main
 
 import (
 	//"encoding/json"
-	"fmt"
 	//"io/ioutil"
-	"os"
 	//"encoding/gob"
+	"os"
+	"fmt"
 	"net"
  	"log"
- 	"bufio"
  	"User"
  	"time"
+ 	"bufio"
+	"strconv"
 )
 
 
@@ -19,7 +20,7 @@ const DIRS_SIZE = 4
 func main() {
 	//server connection
 
-	server_socket, err := net.Listen("tcp", ":9999")
+	server_socket, err := net.Listen("tcp", ":8888")
 	
 	uManager := User.NewUserManager()
 	print(uManager.QuantityUsersLoggedOn)
@@ -62,8 +63,9 @@ func getUserInfo(reader *bufio.Reader) (username, password string){
 
 func checkOptions(option int) bool {
 	for i := 0; i < DIRS_SIZE; i++ {
-		if(option == opsConDirs[i])
+		if(option == opsConDirs[i]){
 			return true
+		}
 	}
 
 	return false
@@ -133,7 +135,7 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  			if User.Login(user, pass) {
 	  				mensaje_enviar = "Dir User:"
 	  				fmt.Println("Loggineado")
-	  				loggedUser = User.NewUser(user, pass)
+	  				loggedUser := User.NewUser(user, pass)
 	  				cli_sock.Write([]byte(mensaje_enviar))
 	  				dir_name := ""
 	  				file_name := ""
@@ -177,28 +179,28 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  						case 2: //ls
 	  							files_list = loggedUser.ListFiles()
 	  							mensaje_enviar = "ls"
-	  							cli_sock.Write([]byte(mensaje_enviar))
+	  							cli_sock.Write([]byte(files_list))
 	  							time.Sleep(100 * time.Millisecond)
 	  						case 3: //put
 	  							dir_to_write := loggedUser.GetCurrentDirName()
 	  							val, err := reader.ReadString('\n')
 	  							
 	  							if err != nil {
-	  								fmt..Println(err)
+	  								fmt.Println(err)
 	  								continue
 	  							}
 
-	  							file_size := int(val)
+	  							file_size, _ := strconv.Atoi(val)
 	  							size_read := 0
 
 	  							path_write := dir_to_write + "/" + file_name
-	  							n_file, error = os.Create(path_write)
+
+	  							n_file, _ := os.Create(path_write)
 	  							defer n_file.Close()
 	  							
-	  							if file_size < reading_size{
+	  							if file_size < reading_size {
 	  								cant_read = file_size	  								
-	  							}
-								else{									
+	  							} else {									
 	  								cant_read = reading_size
 								}
 
@@ -221,22 +223,22 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  						case 4: //get
 	  							file_dir := loggedUser.GetCurrentDirName()
 	  							file_path := file_dir + "/" + file_name
-	  							file, err := os.Open(file_path)
+	  							file, _ := os.Open(file_path)
 	  							defer file.Close()
-	  							file_info, err := file.Stat()
+	  							file_info, _ := file.Stat()
 	  							file_size := file_info.Size()	  							
 	  							time.Sleep(100 * time.Millisecond)
-	  							cli_sock.Write(file_size)	  							
+	  							cli_sock.Write([]byte(strconv.Itoa(int(file_size))))	  							
 	  							time.Sleep(300 * time.Millisecond)
 	  							size_read := 0
-	  							cant_read = Min(file_size - size_read, reading_size)
+	  							cant_read = Min(int(file_size) - size_read, reading_size)
 
 	  							for file_size > 0 {
-	  								data := make([]byte, Min(file_size, size_read))	
+	  								data := make([]byte, Min(int(file_size), size_read))	
 	  								quant, _ := file.Read(data)  								
 	  								cli_sock.Write(data)
 
-	  								file_size -= quant
+	  								file_size -= int64(quant)
 	  							}
 
 	  							fmt.Println("Enviado")
@@ -261,7 +263,7 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  					}
 
 	  					if (optionReceived != 4) {
-	  						cli_sock.Write(mensaje_enviar)
+	  						cli_sock.Write([]byte(mensaje_enviar))
 	  					}
 
 	  					if optionReceived == 9 {

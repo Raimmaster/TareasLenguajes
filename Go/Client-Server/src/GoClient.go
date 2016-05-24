@@ -32,7 +32,13 @@ func main(){
     opcion := 0
     //para entradas de texto
     reader := bufio.NewReader(os.Stdin)
+    //optxt,_:= reader.ReadString('\n')
 
+/*    message, _ = bufio.NewReader(conn).ReadString('\n')
+				if message!="Success\n" {
+					fmt.Print(message)
+					text, _ := reader.ReadString('\n')
+					conn.Write([]byte(text))*/
     for ; opcion != 3; {
 
     }
