@@ -231,10 +231,10 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  							cli_sock.Write([]byte(strconv.Itoa(int(file_size))))	  							
 	  							time.Sleep(300 * time.Millisecond)
 	  							size_read := 0
-	  							cant_read = Min(int(file_size) - size_read, reading_size)
+	  							quant := Min(int(file_size) - size_read, reading_size)
 
 	  							for file_size > 0 {
-	  								data := make([]byte, Min(int(file_size), size_read))	
+	  								data := make([]byte, Min(int(int(file_size) - quant), size_read))	
 	  								quant, _ := file.Read(data)  								
 	  								cli_sock.Write(data)
 

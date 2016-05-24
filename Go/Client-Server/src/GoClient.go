@@ -7,15 +7,15 @@ import (
 	"os"
 	"fmt"
 	"net"
- 	"bufio"
- 	"User"
  	"time"
+ 	"bufio"
+	"strconv"
 )
 
 
 var opsConDirs = []int{1, 5, 6, 7}
 
-logged_options := {"1. cd", "2. ls", "3. put (file)", 
+var logged_options = []string{"1. cd", "2. ls", "3. put (file)", 
 	"4. get", "5. rm file", "6. rmdir dir", 
 	"7. mkdir dir", "8. pwd", "9. Salir"}
 
@@ -28,11 +28,19 @@ func getUserMessage(cli_sock net.Conn, reader *bufio.Reader) string {
 		fmt.Print("\nIngrese el password: ")    	
 	    password,_:= reader.ReadString('\n')
 	    //Enviar al servidor
-	    client_socket.Write([]byte(username))
-	    client_socket.Write([]byte(password))				
-		mensaje, _ := bufio.NewReader(client_socket).ReadString('\n')
+	    cli_sock.Write([]byte(username))
+	    cli_sock.Write([]byte(password))				
+		mensaje, _ := bufio.NewReader(cli_sock).ReadString('\n')
 
 		return mensaje
+}
+
+func Min(x, y int) int {
+    if x < y {
+        return x
+    }
+
+    return y
 }
 
 func main(){
@@ -64,7 +72,7 @@ func main(){
 				response, _ := bufio.NewReader(client_socket).ReadString('\n')
 
 				if response == "Ingresar usuario:"{	
-					mensaje, _ := getUserMessage(client_socket, reader)
+					mensaje := getUserMessage(client_socket, reader)
 
 					if mensaje == "Usuario creado" {
 						fmt.Println("Usuario creado exitosamente.")
@@ -78,7 +86,7 @@ func main(){
 				fmt.Println(response)
 
 					if response == "Login" {				
-						mensaje, _ := getUserMessage(client_socket, reader)
+						mensaje := getUserMessage(client_socket, reader)
 
 						if mensaje == "Dir User:" {//conectado
 							fmt.Println("Conexion establecida!")
@@ -86,7 +94,7 @@ func main(){
 							data_con := " "
 							for ; data_con != "Log Off:"; {
 								fmt.Println("Opciones:\n")
-								for i, valor := range opsConDirs {
+								for _, valor := range opsConDirs {
 								    fmt.Printf("%v \n", valor)
 								}
 
@@ -98,28 +106,28 @@ func main(){
 								switch selectedOption {
 									case 1: //cd
 										fmt.Println("Ingrese el nuevo dir a estar: ")
-										dir_name = reader.ReadString('\n')
+										dir_name, _ = reader.ReadString('\n')
 									case 2: //ls
 										fmt.Println("Listar dirs: \n")
 									case 3: //put
 										fmt.Println("Ingrese el path del archivo a subir: ")
-										dir_name = reader.ReadString('\n')
+										dir_name, _ = reader.ReadString('\n')
 										fmt.Println("Ingrese el nombre del nuevo archivo: ")
-										file_name = reader.ReadString('\n')
+										file_name, _ = reader.ReadString('\n')
 									case 4: //get
 										fmt.Println("Ingrese el nombre del nuevo archivo: ")
-										file_name = reader.ReadString('\n')
+										file_name, _ = reader.ReadString('\n')
 										fmt.Println("Ingrese el path donde estara: ")
-										file_path = reader.ReadString('\n')
+										file_path, _ = reader.ReadString('\n')
 									case 5: //rm file
 										fmt.Println("Ingrese el nombre del archivo a eliminar: ")
-										dir_name = reader.ReadString('\n')
+										dir_name, _ = reader.ReadString('\n')
 									case 6: //rmdir
 										fmt.Println("Ingrese el nombre del directorio a eliminar: ")
-										dir_name = reader.ReadString('\n')
+										dir_name, _ = reader.ReadString('\n')
 									case 7: //mkdir
 										fmt.Println("Ingrese el nombre del directorio a crear: ")
-										dir_name = reader.ReadString('\n')
+										dir_name, _ = reader.ReadString('\n')
 									case 8: //pwd
 										fmt.Println("Me encuentro en: ")
 									case 9: //exit
@@ -145,20 +153,20 @@ func main(){
 				  						defer file.Close()
 				  						//file info
 				  						file_info, _ := file.Stat()
-				  						file_size = file_info.Size()
+				  						file_size := file_info.Size()
 				  						//send file's size
 				  						client_socket.Write([]byte(file_name))
 				  						time.Sleep(200 * time.Millisecond)
-				  						client_socket.Write([]byte(strconv.Atoi(file_size)))
+				  						client_socket.Write([]byte(string(file_size)))
 				  						time.Sleep(200 * time.Millisecond)
 				  						//send file
 				  						size_read := 0
-			  							cant_read = Min(int(file_size) - size_read, reading_size)
+			  							quant := Min(int(file_size) - size_read, reading_size)
 
 			  							for file_size > 0 {
-			  								data := make([]byte, Min(int(file_size), size_read))	
+			  								data := make([]byte, Min(int(int(file_size) - quant), size_read))	
 			  								quant, _ := file.Read(data)  								
-			  								cli_sock.Write(data)
+			  								client_socket.Write(data)
 
 			  								file_size -= int64(quant)
 			  							}
@@ -167,7 +175,7 @@ func main(){
 										client_socket.Write([]byte(file_name))
 										//get the size to be reading
 										val, _ := bufio.NewReader(client_socket).ReadString('\n')
-										file_size := strconv.Atoi(val)
+										file_size, _ := strconv.Atoi(val)
 										size_read := 0
 										var cant_read int
 										//Writing file
@@ -186,7 +194,7 @@ func main(){
 
 										for cant_read > 0 {
 											n_file.Write(data)
-											cant_read = Min(file_size - size_read, reading_size)
+											cant_read = Min(int(file_size) - size_read, reading_size)
 											if cant_read == 0 {
 												break
 											}
