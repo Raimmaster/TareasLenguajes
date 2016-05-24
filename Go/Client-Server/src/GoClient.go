@@ -20,6 +20,7 @@ logged_options := {"1. cd", "2. ls", "3. put (file)",
 	"7. mkdir dir", "8. pwd", "9. Salir"}
 
 const DIRS_SIZE = 4
+const reading_size = 1024
 
 func getUserMessage(cli_sock net.Conn, reader *bufio.Reader) string {
 		fmt.Print("\nIngrese el username: ")    	
@@ -139,11 +140,59 @@ func main(){
 										files_list, _ := bufio.NewReader(client_socket).ReadString('\n')
 										fmt.Println(files_list)
 									case 3://sending files
-										time.Sleep(3 * time.Millisecond)
+										time.Sleep(300 * time.Millisecond)
 										file, _ := os.Open(dir_name)
 				  						defer file.Close()
+				  						//file info
 				  						file_info, _ := file.Stat()
+				  						file_size = file_info.Size()
+				  						//send file's size
+				  						client_socket.Write([]byte(file_name))
+				  						time.Sleep(200 * time.Millisecond)
+				  						client_socket.Write([]byte(strconv.Atoi(file_size)))
+				  						time.Sleep(200 * time.Millisecond)
+				  						//send file
+				  						size_read := 0
+			  							cant_read = Min(int(file_size) - size_read, reading_size)
+
+			  							for file_size > 0 {
+			  								data := make([]byte, Min(int(file_size), size_read))	
+			  								quant, _ := file.Read(data)  								
+			  								cli_sock.Write(data)
+
+			  								file_size -= int64(quant)
+			  							}
+			  							fmt.Println("Archivo enviado.")				  						
 									case 4://reading file
+										client_socket.Write([]byte(file_name))
+										//get the size to be reading
+										val, _ := bufio.NewReader(client_socket).ReadString('\n')
+										file_size := strconv.Atoi(val)
+										size_read := 0
+										var cant_read int
+										//Writing file
+			  							n_file, _ := os.Create(file_path)
+			  							defer n_file.Close()
+			  							
+			  							if file_size < reading_size {
+			  								cant_read = file_size	  								
+			  							} else {									
+			  								cant_read = reading_size
+										}
+										clReader := bufio.NewReader(client_socket)	  	
+										//func (f *File) ReadAt(b []byte, off int64) (n int, err error)
+										var data [] byte
+										cant_read, _ = clReader.Read(data)
+
+										for cant_read > 0 {
+											n_file.Write(data)
+											cant_read = Min(file_size - size_read, reading_size)
+											if cant_read == 0 {
+												break
+											}
+
+											cant_read, _ = clReader.Read(data)
+										}
 									case 8://receive pwd
 										pwd_mess, _ := bufio.NewReader(client_socket).ReadString('\n')
 										fmt.Println(pwd_mess)
