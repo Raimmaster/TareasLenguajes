@@ -9,6 +9,7 @@ import (
 	"net"
  	"time"
  	"bufio"
+ 	"strings"
 	"strconv"
 )
 
@@ -56,24 +57,31 @@ func main(){
     reader := bufio.NewReader(os.Stdin)
     for ; opcion != 3; {
     	fmt.Println("\n1. Crear usuario.")    	
-    	fmt.Println("\n2. Login.")
-    	fmt.Println("\n3. Salir.")
+    	fmt.Println("2. Login.")
+    	fmt.Println("3. Salir.")
     	fmt.Print("\nEscribir opcion: ")    	
     	opInput,_:= reader.ReadString('\n')
-		opcion,_ = strconv.Atoi(string(opInput))
+		opcion, _ = strconv.Atoi(strings.TrimSpace(string(opInput)))
 		var file_name string
 		var file_path string
-
+		fmt.Println(opcion)
 		switch opcion {
 			case 1://create user
 				//para enviar del socket al server
+				fmt.Println("Antes de op")
 				client_socket.Write([]byte(opInput))
 
-				response, _ := bufio.NewReader(client_socket).ReadString('\n')
+				response, err := bufio.NewReader(client_socket).ReadString('\n')
 
-				if response == "Ingresar usuario:"{	
+				if err != nil {
+					fmt.Println(err)
+				}
+				fmt.Println("Antes enviar el user")
+				fmt.Println(response)
+				if response == "Ingresar usuario:"{
+					fmt.Println("Justo antes de user")	
 					mensaje := getUserMessage(client_socket, reader)
-
+					fmt.Println("Justo después de user")
 					if mensaje == "Usuario creado" {
 						fmt.Println("Usuario creado exitosamente.")
 					} else {
@@ -101,7 +109,7 @@ func main(){
 								fmt.Print("Elegir: ")
 								selectedOption := 0
 								opInput,_:= reader.ReadString('\n')
-								selectedOption,_ = strconv.Atoi(string(opInput))
+								selectedOption,_ = strconv.Atoi(strings.TrimSpace(string(opInput)))
 								var dir_name string
 								switch selectedOption {
 									case 1: //cd

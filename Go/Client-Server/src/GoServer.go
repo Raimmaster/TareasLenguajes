@@ -5,13 +5,15 @@ import (
 	//"io/ioutil"
 	//"encoding/gob"
 	"os"
+	"io"
 	"fmt"
 	"net"
  	"log"
  	"User"
  	"time"
  	"bufio"
-	"strconv"
+	"strconv"	
+	"strings"
 )
 
 
@@ -81,59 +83,54 @@ func Min(x, y int) int {
 
 func handleClientThreadConnection(cli_sock net.Conn){
 	
-	optionReceived := 0
-
-	fmt.Println("Opciones con directorios: ", opsConDirs)
+	var optionReceived int = 0 
 
 	for ; optionReceived != 3; {
 		fmt.Println("Conexion con: ", cli_sock.RemoteAddr())
 		
 		//err := gob.NewDecoder(c).Decode(&message)
 	  	reader := bufio.NewReader(cli_sock)	  	
-	  	valor_menu, _, err := reader.ReadRune()
-	  	optionReceived = int(valor_menu)
+	  	valor_menu, err := reader.ReadString('\n')
+	  	optionReceived, _ = strconv.Atoi(strings.TrimSpace(string(valor_menu)))
 	  	//fmt.Println(cant)
 	  	
-	  	if err != nil {
+	  	if err != nil && err == io.EOF {
 	  		fmt.Println("Error ", err)
-	  		continue
+	  		return
 	  	}
 
-	  	fmt.Println("Mensaje: ", string(optionReceived))
+
+
+	  	fmt.Println("Num: ", string(optionReceived))
 	  	
 	  	var mensaje_enviar string
 
-	  	switch optionReceived {
-	  		case 1://create user
-	  			mensaje_enviar = "Ingresar usuario:"
+	  	switch int(optionReceived) {
+	  	case 1://create user
+	  			fmt.Println("Going to write")
+	  			mensaje_enviar = "Ingresar usuario:\n"
 	  			cli_sock.Write([]byte(mensaje_enviar))
-	  			/*user, err := reader.ReadString('\n')
-	  			
-	  			if (err != nil) {
-	  				fmt.Println(err)
-	  			}
-
-	  			pass, err := reader.ReadString('\n')
-	  			*/
-
 	  			user, pass := getUserInfo(reader)
 
+	  			fmt.Println("Read the user info")
 	  			if User.CreateUser(string(user), string(pass)) {
 	  				mensaje_enviar = "Usuario creado"
 	  			}else {
 	  				mensaje_enviar = "Ya existe"
 	  			}
 
+	  			fmt.Println("Going to write to file")
 	  			User.WriteToUsersFile()
 	  			cli_sock.Write([]byte(mensaje_enviar))
 	  			fmt.Println("Creado")
 	  		case 2://login
 	  			mensaje_enviar = "Login"
+	  			fmt.Println("Going to log")
 	  			cli_sock.Write([]byte(mensaje_enviar))
 
 	  			user, pass := getUserInfo(reader)
 	  			if User.Login(user, pass) {
-	  				mensaje_enviar = "Dir User:"
+	  				mensaje_enviar = "Dir User:\n"
 	  				fmt.Println("Loggineado")
 	  				loggedUser := User.NewUser(user, pass)
 	  				cli_sock.Write([]byte(mensaje_enviar))
@@ -276,7 +273,7 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  	//opcion,err:= strconv.Atoi(strings.TrimSpace(string(message)))
 	  	cli_sock.Write([]byte("Has been received.\n"))
 		//optionReceived := int()
-		optionReceived = 3
+		//optionReceived = 3
 	}
 
 	User.WriteToUsersFile()
