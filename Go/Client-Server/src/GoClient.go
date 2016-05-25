@@ -78,7 +78,7 @@ func main(){
 				}
 				fmt.Println("Antes enviar el user")
 				fmt.Println(response)
-				if response == "Ingresar usuario:"{
+				if response == "Ingresar usuario:\n"{
 					fmt.Println("Justo antes de user")	
 					mensaje := getUserMessage(client_socket, reader)
 					fmt.Println("Justo después de user")

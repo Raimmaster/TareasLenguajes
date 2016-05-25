@@ -47,7 +47,7 @@ func main() {
 
 func getUserInfo(reader *bufio.Reader) (username, password string){
 	user, err := reader.ReadString('\n')
-	  			
+
 	if (err != nil) {
 		fmt.Println(err)
 		return " ", " "
@@ -60,7 +60,7 @@ func getUserInfo(reader *bufio.Reader) (username, password string){
 		return " ", " "
 	}	
 
-	return string(user), string(pass)
+	return strings.TrimSpace(user), strings.TrimSpace(pass)
 }
 
 func checkOptions(option int) bool {

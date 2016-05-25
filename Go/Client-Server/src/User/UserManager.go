@@ -2,8 +2,8 @@ package User
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"fmt"
 	"os"
 //	"log"
 )
@@ -17,6 +17,9 @@ var UsersMap = make(map[string]string)
 func NewUserManager() *UserManager {
 	u_Manager := new (UserManager)
 	u_Manager.QuantityUsersLoggedOn = 0
+	if ReadUsersFile(){
+		fmt.Println("Loaded users.")
+	}
 	return u_Manager
 }
 
@@ -81,7 +84,7 @@ func WriteToUsersFile() bool{
 
 func ReadUsersFile() bool{
 	//var users []User
-	usersFile ,err := ioutil.ReadFile("Usuarios.txt")
+	usersFile ,err := ioutil.ReadFile("usuarios.txt")
 	
 	if err != nil {
 		fmt.Print("Error opening user file.")
