@@ -66,7 +66,7 @@ func WriteToUsersFile() bool{
 		return false
 	}
 
-	fmt.Println(usersToWrite)
+	//fmt.Println(usersToWrite)
 	
 	//errors := ioutil.WriteFile("Usuarios.txt", usersToWrite, 0777)
 	

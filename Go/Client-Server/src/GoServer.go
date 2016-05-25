@@ -95,7 +95,7 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  	//fmt.Println(cant)
 	  	
 	  	if err != nil && err == io.EOF {
-	  		fmt.Println("Error ", err)
+	  		fmt.Println("Logged user off")
 	  		return
 	  	}
 
@@ -114,9 +114,9 @@ func handleClientThreadConnection(cli_sock net.Conn){
 
 	  			fmt.Println("Read the user info")
 	  			if User.CreateUser(string(user), string(pass)) {
-	  				mensaje_enviar = "Usuario creado"
+	  				mensaje_enviar = "Usuario creado\n"
 	  			}else {
-	  				mensaje_enviar = "Ya existe"
+	  				mensaje_enviar = "Ya existe\n"
 	  			}
 
 	  			fmt.Println("Going to write to file")
@@ -124,7 +124,7 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  			cli_sock.Write([]byte(mensaje_enviar))
 	  			fmt.Println("Creado")
 	  		case 2://login
-	  			mensaje_enviar = "Login"
+	  			mensaje_enviar = "Login\n"
 	  			fmt.Println("Going to log")
 	  			cli_sock.Write([]byte(mensaje_enviar))
 
@@ -172,10 +172,10 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  					switch optionReceived {
 	  						case 1: //cd
 	  							loggedUser.ChangeDir(dir_name)
-	  							mensaje_enviar = "cd"
+	  							mensaje_enviar = "cd\n"
 	  						case 2: //ls
 	  							files_list = loggedUser.ListFiles()
-	  							mensaje_enviar = "ls"
+	  							mensaje_enviar = "ls\n"
 	  							cli_sock.Write([]byte(files_list))
 	  							time.Sleep(100 * time.Millisecond)
 	  						case 3: //put
@@ -215,7 +215,7 @@ func handleClientThreadConnection(cli_sock net.Conn){
 									cant_read, _ = reader.Read(data)
 								}
 
-								mensaje_enviar = "Written"
+								mensaje_enviar = "Written\n"
 								fmt.Println("Obtuve archivo")
 	  						case 4: //get
 	  							file_dir := loggedUser.GetCurrentDirName()
@@ -239,24 +239,24 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  							}
 
 	  							fmt.Println("Enviado")
-	  							mensaje_enviar = "Sent"
+	  							mensaje_enviar = "Sent\n"
 	  						case 5: //rm file
 	  							loggedUser.RemoveFile(file_name)
-	  							mensaje_enviar = "rm"
+	  							mensaje_enviar = "rm\n"
 	  						case 6: //rmdir
 	  							loggedUser.RemoveDir(dir_name)
-	  							mensaje_enviar = "rmdir"
+	  							mensaje_enviar = "rmdir\n"
 	  						case 7: //mkdir
 	  							loggedUser.CreateDir(dir_name)
-	  							mensaje_enviar = "mkdir"
+	  							mensaje_enviar = "mkdir\n"
 	  						case 8: //pwd
 	  							estoy := loggedUser.GetCurrentDirName()
-	  							mensaje_enviar = "pwd"
+	  							mensaje_enviar = "pwd\n"
 	  							cli_sock.Write([]byte(estoy))
 	  							time.Sleep(300 * time.Millisecond)
 	  						case 9: //exit
 	  							fmt.Println("Logging off user: ", loggedUser.Username)
-	  							mensaje_enviar = "Log off:"
+	  							mensaje_enviar = "Log off:\n"
 	  					}
 
 	  					if (optionReceived != 4) {

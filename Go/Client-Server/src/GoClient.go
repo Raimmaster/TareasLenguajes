@@ -78,11 +78,11 @@ func main(){
 				}
 				fmt.Println("Antes enviar el user")
 				fmt.Println(response)
-				if response == "Ingresar usuario:\n"{
+				if strings.TrimSpace(response) == "Ingresar usuario:"{
 					fmt.Println("Justo antes de user")	
 					mensaje := getUserMessage(client_socket, reader)
 					fmt.Println("Justo después de user")
-					if mensaje == "Usuario creado" {
+					if strings.TrimSpace(mensaje) == "Usuario creado" {
 						fmt.Println("Usuario creado exitosamente.")
 					} else {
 						fmt.Println("El usuario no fue creado. Quiza ya existia.")
@@ -93,10 +93,10 @@ func main(){
 				response, _ := bufio.NewReader(client_socket).ReadString('\n')
 				fmt.Println(response)
 
-					if response == "Login" {				
+					if strings.TrimSpace(response) == "Login" {				
 						mensaje := getUserMessage(client_socket, reader)
 
-						if mensaje == "Dir User:" {//conectado
+						if strings.TrimSpace(mensaje) == "Dir User:" {//conectado
 							fmt.Println("Conexion establecida!")
 
 							data_con := " "
