@@ -53,6 +53,7 @@ func Login(username, password string) bool{
 }
 
 func WriteToUsersFile() bool{
+	ReadUsersFile()
 	usersToWrite, error := json.Marshal(UsersMap)
 
 	if error != nil {
@@ -70,7 +71,7 @@ func WriteToUsersFile() bool{
 	for key := range UsersMap {
 		total_dirname := "Usuarios/" + key
 		os.MkdirAll(total_dirname, 0777)
-		fmt.Println(key)
+		//fmt.Println(key)
 	}
 	//errors := ioutil.WriteFile("Usuarios.txt", usersToWrite, 0777)
 	
@@ -88,8 +89,8 @@ func WriteToUsersFile() bool{
 
 func ReadUsersFile() bool{
 	//var users []User
-	usersFile ,err := ioutil.ReadFile("usuarios.txt")
-	
+	usersFile ,err := ioutil.ReadFile("usuarios.txt")	
+
 	if err != nil {
 		fmt.Print("Error opening user file.")
 		return false
@@ -100,6 +101,12 @@ func ReadUsersFile() bool{
 	
 	if err != nil {
 		return false
+	}
+
+	for key := range UsersMap {
+		total_dirname := "Usuarios/" + key
+		os.MkdirAll(total_dirname, 0777)
+		//fmt.Println(key)
 	}
 
 	return true	

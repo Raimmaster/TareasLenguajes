@@ -136,7 +136,7 @@ func main(){
 									case 8: //pwd
 										fmt.Println("Me encuentro en: ")
 									case 9: //exit
-										fmt.Println("Logging out.	")
+										fmt.Println("Logging out.")
 								}
 
 								client_socket.Write([]byte(opInput))
@@ -150,7 +150,7 @@ func main(){
 
 								switch selectedOption {
 									case 2:
-										files_list, _ := bufio.NewReader(client_socket).ReadString('\n')
+										files_list, _ := bufio.NewReader(client_socket).ReadString('\n')										
 										fmt.Println(files_list)
 									case 3://sending files
 										time.Sleep(300 * time.Millisecond)
@@ -220,11 +220,7 @@ func main(){
 									data_con = "Sent"
 								}
 
-								fmt.Println(data_con)
-								/*if strings.TrimSpace(string(data_con)) == "Log Off:" {
-									fmt.Println("Io mi vado")
-									break
-								}*/
+								fmt.Println("Data con: ", data_con)								
 							} 
 						}
 					}

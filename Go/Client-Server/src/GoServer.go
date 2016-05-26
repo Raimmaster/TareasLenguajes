@@ -24,8 +24,9 @@ func main() {
 
 	server_socket, err := net.Listen("tcp", ":8888")
 	
-	uManager := User.NewUserManager()
-	print(uManager.QuantityUsersLoggedOn)
+	uManager := User.NewUserManager()	
+	os.MkdirAll("Usuarios", 0777)
+	fmt.Println(uManager.QuantityUsersLoggedOn)
 	
 	if err != nil {
 		log.Fatal(err)
@@ -96,11 +97,11 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  	//fmt.Println(cant)
 	  	
 	  	if err != nil && err == io.EOF {
-	  		fmt.Println("Logged user off")
+	  		fmt.Println("Logged user off.")
 	  		return
 	  	}
 
-	  	fmt.Println("Opcion: ", string(optionReceived))
+	  	fmt.Printf("Opcion: %d \n", optionReceived)
 	  	
 	  	var mensaje_enviar string
 
@@ -121,7 +122,6 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  			fmt.Println("Creado")
 	  		case 2://login
 	  			mensaje_enviar = "Login\n"
-	  			fmt.Println("Going to log")
 	  			cli_sock.Write([]byte(mensaje_enviar))
 
 	  			user, pass := getUserInfo(reader)
@@ -148,7 +148,6 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  						optionReceived = 2
 	  						continue
 	  					}	  					
-
 	  					if checkOptions(optionReceived) {
 	  						fmt.Println("Opciones, checking")
 	  						dir_name, err = reader.ReadString('\n')
@@ -171,7 +170,6 @@ func handleClientThreadConnection(cli_sock net.Conn){
 						//buffer size when reading or writing
 						reading_size := 1024
 						var cant_read int
-	  					fmt.Printf("Still: %d", optionReceived)
 	  					switch (optionReceived) {
 	  						case 1: //cd
 	  							loggedUser.ChangeDir(dir_name)

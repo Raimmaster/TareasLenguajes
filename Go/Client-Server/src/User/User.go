@@ -70,12 +70,12 @@ func (user *User) CreateDir(dirname string) bool{
 
 func (user *User) ListFiles() string{//ls
 	var files_names string
-	files_names = "\n"
+	files_names = " \n"
 
 	files, err := ioutil.ReadDir(user.CurrentDir)
 	
 	if err != nil{
-		return " "
+		return " \n"
 	}
 
 	for _, file := range files {
