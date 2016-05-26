@@ -86,7 +86,7 @@ func (user *User) ListFiles() string{//ls
 } 
 
 func (user *User) GetCurrentDirName() string{
-	return user.CurrentDir
+	return user.CurrentDir + "\n"
 }
 
 func (usuario *User) ChangeDir(nombreDirectorio string) bool {//cd

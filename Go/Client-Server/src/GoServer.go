@@ -81,6 +81,7 @@ func Min(x, y int) int {
     return y
 }
 
+//function for each thread connection
 func handleClientThreadConnection(cli_sock net.Conn){
 	
 	var optionReceived int = 0 
@@ -99,27 +100,22 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  		return
 	  	}
 
-
-
-	  	fmt.Println("Num: ", string(optionReceived))
+	  	fmt.Println("Opcion: ", string(optionReceived))
 	  	
 	  	var mensaje_enviar string
 
 	  	switch int(optionReceived) {
-	  	case 1://create user
-	  			fmt.Println("Going to write")
+	  		case 1://create user
 	  			mensaje_enviar = "Ingresar usuario:\n"
 	  			cli_sock.Write([]byte(mensaje_enviar))
 	  			user, pass := getUserInfo(reader)
 
-	  			fmt.Println("Read the user info")
 	  			if User.CreateUser(string(user), string(pass)) {
 	  				mensaje_enviar = "Usuario creado\n"
 	  			}else {
 	  				mensaje_enviar = "Ya existe\n"
 	  			}
 
-	  			fmt.Println("Going to write to file")
 	  			User.WriteToUsersFile()
 	  			cli_sock.Write([]byte(mensaje_enviar))
 	  			fmt.Println("Creado")
@@ -138,16 +134,23 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  				file_name := ""
 	  				files_list := ""
 	  				for {
-	  					valor_menu, _, err := reader.ReadRune()
-	  					optionReceived = int(valor_menu)
-
+	  					valor_menu, err := reader.ReadString('\n')
+	  					fmt.Printf("valor menu: %s \n",valor_menu)
+	  					optionReceived, _ = strconv.Atoi(strings.TrimSpace(valor_menu))
+	  					fmt.Println("Log option:", string(optionReceived))
 	  					if err != nil {
+	  						if err == io.EOF {
+	  							fmt.Println("User cut connection.")
+	  							return
+	  						}
+
 	  						fmt.Println(err)
 	  						optionReceived = 2
 	  						continue
 	  					}	  					
 
 	  					if checkOptions(optionReceived) {
+	  						fmt.Println("Opciones, checking")
 	  						dir_name, err = reader.ReadString('\n')
 	  						if err != nil {
 	  							fmt.Println(err)
@@ -168,8 +171,8 @@ func handleClientThreadConnection(cli_sock net.Conn){
 						//buffer size when reading or writing
 						reading_size := 1024
 						var cant_read int
-	  							
-	  					switch optionReceived {
+	  					fmt.Printf("Still: %d", optionReceived)
+	  					switch (optionReceived) {
 	  						case 1: //cd
 	  							loggedUser.ChangeDir(dir_name)
 	  							mensaje_enviar = "cd\n"
@@ -256,7 +259,7 @@ func handleClientThreadConnection(cli_sock net.Conn){
 	  							time.Sleep(300 * time.Millisecond)
 	  						case 9: //exit
 	  							fmt.Println("Logging off user: ", loggedUser.Username)
-	  							mensaje_enviar = "Log off:\n"
+	  							mensaje_enviar = "Log Off:\n"
 	  					}
 
 	  					if (optionReceived != 4) {

@@ -68,7 +68,6 @@ func main(){
 		switch opcion {
 			case 1://create user
 				//para enviar del socket al server
-				fmt.Println("Antes de op")
 				client_socket.Write([]byte(opInput))
 
 				response, err := bufio.NewReader(client_socket).ReadString('\n')
@@ -76,12 +75,9 @@ func main(){
 				if err != nil {
 					fmt.Println(err)
 				}
-				fmt.Println("Antes enviar el user")
 				fmt.Println(response)
 				if strings.TrimSpace(response) == "Ingresar usuario:"{
-					fmt.Println("Justo antes de user")	
 					mensaje := getUserMessage(client_socket, reader)
-					fmt.Println("Justo después de user")
 					if strings.TrimSpace(mensaje) == "Usuario creado" {
 						fmt.Println("Usuario creado exitosamente.")
 					} else {
@@ -99,17 +95,18 @@ func main(){
 						if strings.TrimSpace(mensaje) == "Dir User:" {//conectado
 							fmt.Println("Conexion establecida!")
 
-							data_con := " "
-							for ; data_con != "Log Off:"; {
+							var data_con string = ""
+							//data_con := " "
+							for ; strings.TrimSpace(data_con) != "Log Off:"; {
 								fmt.Println("Opciones:\n")
-								for _, valor := range opsConDirs {
+								for _, valor := range logged_options {
 								    fmt.Printf("%v \n", valor)
 								}
 
 								fmt.Print("Elegir: ")
 								selectedOption := 0
-								opInput,_:= reader.ReadString('\n')
-								selectedOption,_ = strconv.Atoi(strings.TrimSpace(string(opInput)))
+								opInput, _ := reader.ReadString('\n')
+								selectedOption,_ = strconv.Atoi(strings.TrimSpace(opInput))
 								var dir_name string
 								switch selectedOption {
 									case 1: //cd
@@ -139,7 +136,7 @@ func main(){
 									case 8: //pwd
 										fmt.Println("Me encuentro en: ")
 									case 9: //exit
-										fmt.Println("Log off")
+										fmt.Println("Logging out.	")
 								}
 
 								client_socket.Write([]byte(opInput))
@@ -224,6 +221,10 @@ func main(){
 								}
 
 								fmt.Println(data_con)
+								/*if strings.TrimSpace(string(data_con)) == "Log Off:" {
+									fmt.Println("Io mi vado")
+									break
+								}*/
 							} 
 						}
 					}
