@@ -91,8 +91,6 @@ func (user *User) GetCurrentDirName() string{
 
 func (usuario *User) ChangeDir(nombreDirectorio string) bool {//cd
 	//hacer lo que tenga que hacer
-	//user.User.ChangeDir("music")
-	//own_dir := "Usuarios/" + usuario.Username
 
 	if(nombreDirectorio == "..") {//if I have to return
 		usuario.CurrentDir = usuario.PrevDir

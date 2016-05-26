@@ -67,7 +67,11 @@ func WriteToUsersFile() bool{
 	}
 
 	//fmt.Println(usersToWrite)
-	
+	for key := range UsersMap {
+		total_dirname := "Usuarios/" + key
+		os.MkdirAll(total_dirname, 0777)
+		fmt.Println(key)
+	}
 	//errors := ioutil.WriteFile("Usuarios.txt", usersToWrite, 0777)
 	
 	_, errors := f_users.Write(usersToWrite)	
@@ -102,7 +106,7 @@ func ReadUsersFile() bool{
 }
 
 func renewMap() bool {
-	for key := range UsersMap {
+	for key := range UsersMap {		
 		delete (UsersMap, key)
 	}
 
