@@ -7,8 +7,54 @@ from socket import *
 if sys.version_info > (3,):
 	buffer = memoryview
 
+def put(client_socket, file_name, dir_name): #send files
+	time.sleep(0.3)
+	#file info
+	file_name = buffer(file_name.encode())
+	file_info = os.stat(dir_name)
+	file_size = file_info.st_size
+	#send file and its size
+	client_socket.sendall(file_name)
+	time.sleep(0.2)
+	client_socket.send(str(file_size).encode('ascii'))
+	#open file	
+	f_send = open (dir_name, "rb") 
+	time.sleep(0.2)
+	bytes_data = f_send.read(1024)
+	while (bytes_data):
+		client_socket.sendall(bytes_data)
+		bytes_data = f_send.read(1024)
 
-#import socket
+	f_send.close()
+	print('Archivo enviado')
+	
+def get(client_socket, file_path, file_name): #get files
+	client_socket.sendall(file_name.encode('ascii'))
+	#get the size to be reading
+	file_size = int(str(client_socket.recv(1024).decode('ascii')))
+	reading_size = 1024
+	size_read = 0	
+
+	path_write = file_path + '/' + file_name
+	n_file = open(path_write, 'wb')
+	while(not n_file.closed):
+		#recibimos y escribimos
+		if(file_size < reading_size):
+			cant_read = file_size
+		else:
+			cant_read = reading_size
+			data = client_socket.recv(cant_read)
+			size_read = len(data)
+
+		while(data):
+			n_file.write(data)
+			cant_read = min(file_size - size_read, reading_size)				
+			if(cant_read == 0):
+				break
+			data = client_socket.recv(cant_read)
+			size_read = size_read + len(data)
+		n_file.close()											
+	
 opcion = 0
 logged_options = ('1. cd', '2. ls', '3. put (file)', '4. get', '5. rm file', '6. rmdir dir', '7. mkdir dir', '8. pwd', '9. Salir')
 #connect to server
@@ -59,7 +105,6 @@ while (opcion != 3):
 				client_socket.sendall(password.encode('ascii'))
 				mensaje = client_socket.recv(1024)
 
-				#client_socket.close()
 				if (mensaje.decode('ascii') == 'Dir User:'):#conectado
 					print ("Conexion establecida!")		
 
@@ -104,59 +149,11 @@ while (opcion != 3):
 							print(files_list)
 						#code for sending files 
 						elif(selected_option == 3):
-							time.sleep(0.3)
-							#file info
-							file_name = buffer(file_name.encode())
-							file_info = os.stat(dir_name)
-							file_size = file_info.st_size
-							#send file and its size
-							client_socket.sendall(file_name)
-							time.sleep(0.2)
-							client_socket.send(str(file_size).encode('ascii'))
-							#open file	
-							f_send = open (dir_name, "rb") 
-							time.sleep(0.2)
-							bytes_data = f_send.read(1024)
-							while (bytes_data):
-							    client_socket.sendall(bytes_data)
-							    bytes_data = f_send.read(1024)
-
-							f_send.close()
-							print('Archivo enviado')
-							#client_socket.shutdown(1)
+							put(client_socket, file_name, dir_name)
 
 						#code for reading files
 						elif(selected_option == 4): #get
-							client_socket.sendall(file_name.encode('ascii'))
-							#get the size to be reading
-							file_size = int(str(client_socket.recv(1024).decode('ascii')))
-							#print('Size: ' + str(file_size))
-							reading_size = 1024
-							size_read = 0	
-							while True:
-								path_write = file_path + '/' + file_name
-								#print(path_write)
-								n_file = open(path_write, 'wb')
-								while(not n_file.closed):
-									#recibimos y escribimos
-									if(file_size < reading_size):
-										cant_read = file_size
-									else:
-										cant_read = reading_size
-									data = client_socket.recv(cant_read)
-									size_read = len(data)
-
-									while(data):
-										n_file.write(data)
-										cant_read = min(file_size - size_read, reading_size)
-										#print('Leer: ' + str(cant_read))										
-										if(cant_read == 0):
-											break
-										data = client_socket.recv(cant_read)
-										size_read = size_read + len(data)
-										#print('Leido: ' + str(size_read))
-									n_file.close()									
-								break
+							get(client_socket, file_path, file_name)
 
 						elif(selected_option == 8):#receive pwd
 							print(str(client_socket.recv(1024).decode('ascii')))

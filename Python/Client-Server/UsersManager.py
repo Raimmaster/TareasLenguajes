@@ -30,23 +30,3 @@ class UsersManager:
 				return True
 		
 		return False
-
-
-	#yet to be implemented
-	def findActiveUser(self, username):
-		#find if user is already logged on, limiting another connection from it
-		return
-		
-	def logout(self, username):
-		#log out the user and mark as inactive
-		return (username, True)
-
-	def loadUsers(self):
-		#loading from files
-		return
-
-	def printUsers(self):
-		#show active users
-		return
-
-	#def deleteUser(username): optional

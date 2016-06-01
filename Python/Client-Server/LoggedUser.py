@@ -69,6 +69,3 @@ class LoggedUser:
 
 	def getCurrentDirName(self): #pwd, optional
 		return self.current_dir
-
-	def exit(): #close server?
-		return	

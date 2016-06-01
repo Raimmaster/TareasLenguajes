@@ -6,19 +6,52 @@ import os
 from _thread import *	
 from socket import *
 
-def createConnection():
-	#crear aceptar conexion para el usuario
-	return
-
-def closeConnection(): #exit?
-	#logging out, cerrar conexion para el usuario
-	return
-
 def exit(): #close server
 	fManager.writeToUsersFile(userManager.listOfUsers)
-#	print ("Conexion cerrada de: %s" % str(addr))	
 	return
 
+def put(cli_socket, logUser, file_name): #get files from client
+	dir_to_write = logUser.getCurrentDirName()
+	file_size = int(str(cli_socket.recv(1024).decode('ascii')))								
+	reading_size = 1024
+	size_read = 0
+	path_write = dir_to_write + '/' + file_name
+	n_file = open(path_write, 'wb')
+	while(not n_file.closed):
+		#recibimos y escribimos
+		if (file_size < reading_size):
+			cant_read = file_size 
+		else:
+			cant_read = reading_size													
+			data = cli_socket.recv(cant_read)
+			size_read = len(data)
+			while(data):
+				n_file.write(data)
+				cant_read = min(file_size - size_read, reading_size)										
+				if(cant_read == 0):
+					break
+				data = cli_socket.recv(cant_read)
+				size_read = size_read + len(data)
+			n_file.close()									
+	
+def get(cli_socket, logUser, file_name): #send files to client
+	file_dir = logUser.getCurrentDirName()
+	file_path = file_dir + '/' + file_name
+	file_info = os.stat(file_path)
+	file_size = file_info.st_size
+	time.sleep(0.1)
+	cli_socket.send(str(file_size).encode('ascii'))								
+	time.sleep(0.3)
+
+	f_send = open (file_path, "rb") 
+	bytes_data = f_send.read(1024)
+	while (bytes_data):
+	    cli_socket.sendall(bytes_data)
+	    bytes_data = f_send.read(1024)
+
+	f_send.close()
+	print('Archivo enviado')
+	
 #Check on users, create otherwise
 if(not os.path.isdir('Usuarios')):
 	os.mkdir('Usuarios')
@@ -42,8 +75,6 @@ def client_thread(client_socket, addr):
 
 		while option_received != 3: #3 salir
 			try:		
-				#client_socket, addr = server_socket.accept() #get connection
-				#start_new_thread(client_thread, (client_socket,))
 				print("Obtuve conexion de dir %s" % str(addr))	
 				option_received = int(str(client_socket.recv(1024), ('ascii')))
 				if(option_received == 1): #para ingresar usuario
@@ -70,10 +101,6 @@ def client_thread(client_socket, addr):
 						dir_name = ''
 						file_name = ''
 						while (True):
-							#if mensaje_enviar == 'Written' or mensaje_enviar == 'Sent':
-							#	client_socket.close()
-							#	client_socket, addr = server_socket.accept()
-
 							option_received = int(str(client_socket.recv(1024).decode('ascii')))
 
 							if(option_received in op_con_dirs):
@@ -92,52 +119,12 @@ def client_thread(client_socket, addr):
 								client_socket.sendall(files_list.encode('ascii'))
 								time.sleep(0.3)
 							elif(option_received == 3): #put
-								dir_to_write = loggedUser.getCurrentDirName()
-								file_size = int(str(client_socket.recv(1024).decode('ascii')))								
-								reading_size = 1024
-								size_read = 0
-								while True:
-									path_write = dir_to_write + '/' + file_name
-									n_file = open(path_write, 'wb')
-									while(not n_file.closed):
-										#recibimos y escribimos
-										if (file_size < reading_size):
-											cant_read = file_size 
-										else:
-											cant_read = reading_size													
-										data = client_socket.recv(cant_read)
-										size_read = len(data)
-										while(data):
-											n_file.write(data)
-											cant_read = min(file_size - size_read, reading_size)										
-											if(cant_read == 0):
-												break
-											data = client_socket.recv(cant_read)
-											size_read = size_read + len(data)
-										n_file.close()									
-									break
+								put(client_socket, loggedUser, file_name)
 
 								mensaje_enviar = 'Written'
 								print('Obtenido archivo')
-							elif(option_received == 4): #get		
-								file_dir = loggedUser.getCurrentDirName()
-								#file_name = str(client_socket.recv(1024).decode('ascii'))
-								file_path = file_dir + '/' + file_name
-								file_info = os.stat(file_path)
-								file_size = file_info.st_size
-								time.sleep(0.1)
-								client_socket.send(str(file_size).encode('ascii'))								
-								time.sleep(0.3)
-
-								f_send = open (file_path, "rb") 
-								bytes_data = f_send.read(1024)
-								while (bytes_data):
-								    client_socket.sendall(bytes_data)
-								    bytes_data = f_send.read(1024)
-
-								f_send.close()
-								print('Archivo enviado')
-								#client_socket.close()
+							elif(option_received == 4): #get								
+								get(client_socket, loggedUser, file_name)
 
 								mensaje_enviar = 'Sent'
 							elif(option_received == 5): #rm file
@@ -165,10 +152,8 @@ def client_thread(client_socket, addr):
 								break							
 			finally:			
 				print('Ha acabado.')
-				#client_socket.close()
 
 		exit()	
-		#server_socket.close()
 		client_socket.close()
 		print('Adios')
 		break
@@ -176,5 +161,4 @@ def client_thread(client_socket, addr):
 while True:
 	cliente_socket, addre = server_socket.accept() #get connection
 	start_new_thread(client_thread, (cliente_socket, addre))
-	#print("Obtuve conexion de dir %s" % str(addre))	
 		
