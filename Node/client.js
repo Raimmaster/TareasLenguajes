@@ -22,31 +22,37 @@ client.connect(PORT, HOST, function() {
 //para recibir entradas, y devolver la opcion
 var inputOption = function (){
 	rdInput.question("Escribir opcion: ", function (data){
-    	var response = sendOption(client, data)
-        	if(response.indexOf("Error") >= 0){
-            	console.log(res)
-                inputOption();
-			}
-
-			return "Dir User:";
+    	var response = sendOption(client, data);        	
+		
+		return response;
 	});
 }
 
 var sendOption = function(client, data){
-	client.write(data);
+	client.write(data);	
+
 }
 
 //when receiving data
-client.on('data', function(data) {  
-	
-	for (var i = 0; i < ori_menu.length; i++) {
-		console.log(ori_menu[i] + "\n");
-	}
+client.on('data', function(data) {  	
+	var opcion = 0;
+	while (opcion != 3){		
+		for (var i = 0; i < ori_menu.length; i++) {
+			console.log(ori_menu[i] + "\n");
+		}
 
-	console.log("Escribir opcion: ");
+		console.log("Escribir opcion: ");
+		opcion = inputOption();
 
-	if(opcion === 3 ){//salir
-		client.destroy();
+		switch (opcion){
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:			
+				client.destroy();
+				break;
+		}
 	}
 });
 

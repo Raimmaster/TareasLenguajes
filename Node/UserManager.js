@@ -11,8 +11,6 @@ function UserManager() {
 		var wstream = fs.createWriteStream('');
 		this.writeToUsersFile();
 	}
-
-
 };
 
 UserManager.prototype.createUser = function (username, password){

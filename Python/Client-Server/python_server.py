@@ -68,7 +68,6 @@ server_socket.bind(('', 8888)) #bind to port 8888
 server_socket.listen(5) #5 conexiones pendientes
 
 def client_thread(client_socket, addr):
-#infinite loop so that function do not terminate and thread do not end.
 	while True:
 		option_received = 0
 		op_con_dirs = (1, 5, 6, 7)
@@ -86,7 +85,6 @@ def client_thread(client_socket, addr):
 					mensaje_enviar = 'Usuario creado'
 					exit() #escribir usuario
 					client_socket.sendall(mensaje_enviar.encode('ascii'))
-					#client_socket.exit()
 					print ("Creado")
 				elif(option_received == 2):
 					mensaje_enviar = 'Login:'

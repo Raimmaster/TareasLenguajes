@@ -27,12 +27,12 @@ var handleClient = function(sock) {
     sock.on('data', function(data){
 
     });
-    //client socket closed
-    sock.on('close', function(data){
-
-    });
     //client socket error
     sock.on('error', function(data){
+
+    });
+    //client socket closed
+    sock.on('close', function(data){
 
     });
 }
