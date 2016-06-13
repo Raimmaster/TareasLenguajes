@@ -149,7 +149,10 @@ def client_thread(client_socket, addr):
 								client_socket.sendall(mensaje_enviar.encode('ascii'))	
 
 							if(option_received == 9):
-								break							
+								break
+					else:
+						mensaje_enviar = 'Not connected'
+						client_socket.sendall(mensaje_enviar.encode('ascii'))						
 			finally:			
 				print('Ha acabado.')
 
@@ -161,4 +164,3 @@ def client_thread(client_socket, addr):
 while True:
 	cliente_socket, addre = server_socket.accept() #get connection
 	start_new_thread(client_thread, (cliente_socket, addre))
-		

@@ -87,12 +87,10 @@ while (opcion != 3):
 						break
 								
 		finally:
-			#client_socket.close()
 			print('')
 
 	elif (opcion == 2):
 		try:
-
 			client_socket.sendall(str(opcion).encode('ascii'))
 			response = client_socket.recv(1024)
 			print(response.decode('ascii'))
@@ -165,7 +163,6 @@ while (opcion != 3):
 							data_con = 'Sent'
 						print(data_con)							
 		finally:
-			#client_socket.close()
 			print('')
 	elif (opcion == 3):
 		client_socket.close()

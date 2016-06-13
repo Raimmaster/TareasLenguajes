@@ -1,0 +1,57 @@
+//libraries
+var fs = require('fs');
+var net = require('net');
+var readline = require('readline');
+//port info
+var HOST = '127.0.0.1';
+var PORT = 8888;
+
+//local vars
+var opcion = 0;
+var logged_options =  ["1. cd", "2. ls", "3. put (file)", "4. get", "5. rm file", "6. rmdir dir", "7. mkdir dir", "8. pwd", "9. Salir"];
+var ori_menu = ["1. Crear usuario.", "2. Login.", "3. Salir."];
+var rdInput = readline.createInterface(process.stdin, process.stdout);
+
+var client = new net.Socket();//client socket
+
+//self explanatory
+client.connect(PORT, HOST, function() {
+    console.log("Conectado a: " + HOST + ':' + PORT);
+});
+
+//para recibir entradas, y devolver la opcion
+var inputOption = function (){
+	rdInput.question("Escribir opcion: ", function (data){
+    	var response = sendOption(client, data)
+        	if(response.indexOf("Error") >= 0){
+            	console.log(res)
+                inputOption();
+			}
+
+			return "Dir User:";
+	});
+}
+
+var sendOption = function(client, data){
+	client.write(data);
+}
+
+//when receiving data
+client.on('data', function(data) {  
+	
+	for (var i = 0; i < ori_menu.length; i++) {
+		console.log(ori_menu[i] + "\n");
+	}
+
+	console.log("Escribir opcion: ");
+
+	if(opcion === 3 ){//salir
+		client.destroy();
+	}
+});
+
+//when closing
+client.on('close', function() {
+    console.log("Desconectado...");
+    process.exit();
+});
