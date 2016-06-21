@@ -10,7 +10,7 @@ var PORT = 8888;
 var server = net.createServer();
 server.listen(PORT, HOST);
 
-var wstream = fs.createWriteStream('');
+//var wstream = fs.createWriteStream('');
 
 console.log('Servidor en: ' + HOST + ':' + PORT)<
 
