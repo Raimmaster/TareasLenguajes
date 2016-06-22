@@ -19,22 +19,72 @@ var exit = false;
 //self explanatory
 client.connect(PORT, HOST, function() {
     console.log("Conectado : " + HOST + ':' + PORT);
-    sendOption({message:'Hello server'});
-    while(!exit){
-    	inputOption();
-    }
+    inputOption();
 });
+
+//when receiving data
+client.on('data', function(response) {
+    response = JSON.parse(response);
+    console.log(response);
+    console.log();
+
+
+    //****************************************
+    //
+    //
+    //
+    //TODO: Handle cases and response
+    //
+    //
+    //
+    //****************************************
+
+
+    switch(response.command){
+        case '1' : console.log('cd reponse handler');break;
+
+        //*** Example *** Handling LS response
+        //As of now, server sends a dummy array to client via response.data.directories
+        case '2' :
+        	console.log('ls reponse handler');
+        	//  ...response.data.directories -> 3 dots  = es6 spread operator
+        	console.log('Directories : [',...response.data.directories,']');
+        break;
+        case '3' : console.log('put reponse handler');break;
+        case '4' : console.log('get reponse handler');break;
+        case '5' : console.log('rm reponse handler');break;
+        case '6' : console.log('rmdir reponse handler');break;
+        case '7' : console.log('mkdir reponse handler');break;
+        case '8' : console.log('pwd reponse handler');break;
+        case '9' :
+        	console.log('Exit reponse'); process.exit();
+        break;
+    }
+    inputOption();
+});
+
+
+//when closing
+client.on('close', function() {
+    console.log("Desconectado...");
+    //process.exit();
+});
+
 
 const sendOption = (data) => client.write(JSON.stringify(data));
 const printMenu  = () => console.log(...loggedOptions);
 //para recibir entradas, y devolver la opcion
 const inputOption = () => {
 
+	//TODO: Handle application state.  Logged In or not
+
+	// IF Not LoggedIn { TODO }
+	//then ->
 	printMenu();
 
 	var command = rl.question('Escribir opcion: ');
 	var params = [];
-	console.log("");
+	console.log();
 	switch(command){
 		case "1": params[0] = c_cd();break;
 		// no params for case 2 (ls)
@@ -81,32 +131,3 @@ const createUser = function(client){
 	//return message
 	return response;
 }
-
-//when receiving data
-client.on('data', function(data) {
-	var opcion = 0;
-	while (opcion != 3){
-		for (var i = 0; i < ori_menu.length; i++) {
-			console.log(ori_menu[i] + "\n");
-		}
-
-		//console.log("Escribir opcion: ");
-		opcion = inputOption();
-
-		switch (opcion){
-			case 1://create user
-				break;
-			case 2://login
-				break;
-			case 3://salir
-				client.destroy();
-				break;
-		}
-	}
-});
-
-//when closing
-client.on('close', function() {
-    console.log("Desconectado...");
-    //process.exit();
-});
