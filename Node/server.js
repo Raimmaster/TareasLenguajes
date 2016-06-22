@@ -25,7 +25,7 @@ var handleClient = function(sock) {
 
     //client socket on
     sock.on('data', function(data){
-
+        console.log(JSON.parse(data));
     });
     //client socket error
     sock.on('error', function(data){

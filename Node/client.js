@@ -1,3 +1,4 @@
+"use strict";
 //libraries
 var fs = require('fs');
 var net = require('net');
@@ -9,50 +10,74 @@ var PORT = 8888;
 
 //local vars
 var opcion = 0;
-var logged_options =  ["1. cd", "2. ls", "3. put (file)", "4. get", "5. rm file", "6. rmdir dir", "7. mkdir dir", "8. pwd", "9. Salir"];
+var loggedOptions =  ["\n","1. cd\n", "2. ls\n", "3. put (file)\n", "4. get\n", "5. rm file\n", "6. rmdir dir\n", "7. mkdir dir\n", "8. pwd\n", "9. Salir\n"];
 var ori_menu = ["1. Crear usuario.", "2. Login.", "3. Salir."];
 //var rdInput = readline.createInterface(process.stdin, process.stdout);
 
 var client = new net.Socket();//client socket
-
+var exit = false;
 //self explanatory
 client.connect(PORT, HOST, function() {
-    console.log("Conectado a: " + HOST + ':' + PORT);
+    console.log("Conectado : " + HOST + ':' + PORT);
+    sendOption({message:'Hello server'});
+    while(!exit){
+    	inputOption();
+    }
 });
 
+const sendOption = (data) => client.write(JSON.stringify(data));
+const printMenu  = () => console.log(...loggedOptions);
 //para recibir entradas, y devolver la opcion
-var inputOption = function (){
-	var opzione = rl.question('Escribir opcion: ');
-	var response = sendOption(client, opzione);
+const inputOption = () => {
 
-	// rdInput.question("Escribir opcion: ", function (data){
-	// 	var response = sendOption(client, data);
+	printMenu();
 
-	return response;
-	// });
+	var command = rl.question('Escribir opcion: ');
+	var params = [];
+	console.log("");
+	switch(command){
+		case "1": params[0] = c_cd();break;
+		// no params for case 2 (ls)
+		case "3": params    = c_put();break;
+		case "4": params    = c_get();break;
+		case "5": params[0] = c_rm();break;
+		case "6": params[0] = c_rmdir();break;
+		case "7": params[0] = c_mkdir();break;
+		// no params for case 8 (pwd)
+	}
+	sendOption({command, params});
 }
 
-var inputMessage = function (message){
-	var messagio = rl.question(message);
-	var response = sendOption(client, messagio);
+const c_cd     = () => rl.question('Ingrese directorio: ');
+const c_rm     = () => rl.question('Nombre del archivo a remover: ');
+const c_rmdir  = () => rl.question('Nombre del directorio a remover: ');
+const c_mkdir  = () => rl.question('Nombre del directorio a crear: ');
 
-	return response;
-}
+const c_put = () => {
+	var src       = rl.question('Nombre del archivo: ');
+	var extension = rl.question('Extension: ');
+	var dst       = rl.question('Destino del archivo: ') + extension;
 
-var sendOption = function(client, data){
-	client.write(data);
+	// TODO : Send stream of bytes
+	var blob = "I am a stream of bytes";
+	return [dst,blob];
+};
 
-	return data;
-}
+const c_get = () => {
+	var src       = rl.question('Nombre del archivo: ');
+	var extension = rl.question('Extension: ');
+	return [src,extension];
+};
 
-var createUser = function(client){
+
+const createUser = function(client){
 	var data;
 	//get username
 	data.usuario = rl.question('Ingrese el nombre de usuario: ');
 	//get password
 	data.password = rl.question('Ingrese el password: ');
 	//send them both and get message
-	var response = sendOption(client, data);
+	var response = sendOption(data);
 	//return message
 	return response;
 }
