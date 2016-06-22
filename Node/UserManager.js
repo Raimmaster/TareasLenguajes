@@ -1,14 +1,13 @@
 "use strict";
 
 class UserManager{
-	var ulistName = 'usuarios.txt';
-	var userList;
 
 	constructor() {
+		this.ulistName = 'usuarios.txt';
 		this.userList = {};
 
 		var fs = require('fs');
-		var fileStat = fs.statSync('./' + uFileName);
+		var fileStat = fs.statSync('./' + this.ulistName);
 
 		if(!fileStat.isFile()){
 			var wstream = fs.createWriteStream('');
