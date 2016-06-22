@@ -26,8 +26,8 @@ var inputOption = function (){
 	var response = sendOption(client, opzione);
 
 	// rdInput.question("Escribir opcion: ", function (data){
-	// 	var response = sendOption(client, data);        	
-		
+	// 	var response = sendOption(client, data);
+
 	return response;
 	// });
 }
@@ -48,9 +48,9 @@ var sendOption = function(client, data){
 var createUser = function(client){
 	var data;
 	//get username
-	var data.usuario = rl.question('Ingrese el nombre de usuario: ');
+	data.usuario = rl.question('Ingrese el nombre de usuario: ');
 	//get password
-	var data.password = rl.question('Ingrese el password: ');
+	data.password = rl.question('Ingrese el password: ');
 	//send them both and get message
 	var response = sendOption(client, data);
 	//return message
@@ -58,9 +58,9 @@ var createUser = function(client){
 }
 
 //when receiving data
-client.on('data', function(data) {  	
+client.on('data', function(data) {
 	var opcion = 0;
-	while (opcion != 3){		
+	while (opcion != 3){
 		for (var i = 0; i < ori_menu.length; i++) {
 			console.log(ori_menu[i] + "\n");
 		}
@@ -73,7 +73,7 @@ client.on('data', function(data) {
 				break;
 			case 2://login
 				break;
-			case 3://salir	
+			case 3://salir
 				client.destroy();
 				break;
 		}

@@ -2,7 +2,7 @@
 var fs = require('fs');//files
 var net = require('net');//sockets
 var readline = require('readline');//reading
-var userManager = require('./UserManager')
+var UserManager = require('./UserManager')
 //port info
 var HOST = '127.0.0.1';
 var PORT = 8888;
@@ -15,7 +15,7 @@ server.listen(PORT, HOST);
 console.log('Servidor en: ' + HOST + ':' + PORT)<
 
 server.on('connection', function(sock) {
-    console.log('Cliente conectado: ' + sock.remoteAddress + ':' 
+    console.log('Cliente conectado: ' + sock.remoteAddress + ':'
         + sock.remotePort);
     handleClient(sock);
 });
