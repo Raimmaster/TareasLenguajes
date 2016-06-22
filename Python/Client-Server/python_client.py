@@ -85,7 +85,6 @@ while (opcion != 3):
 					if (mensaje.decode('ascii') == 'Usuario creado'):
 						print ("Perfect!")
 						break
-								
 		finally:
 			print('')
 
