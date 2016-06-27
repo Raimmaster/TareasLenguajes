@@ -6,11 +6,17 @@ import cliSer._
 
 object Server {
 	
-	val opsConDirs = Array(1, 5, 6, 7)
+	val opsConDirs = Array("1", "5", "6", "7")
 	
 	def main(args: Array[String]): Unit = {
 	  val serverSocket = new ServerSocket(8888)
 	  println("Server started")
+
+	  var usersDir = new File("Usuarios")
+
+	  if(!usersDir.exists())
+	  	usersDir.mkdir()
+
 	  while(true){
 	  	val client:Socket = serverSocket.accept()
 
@@ -29,7 +35,7 @@ object Server {
 		var password = read.readObject().asInstanceOf[String]
 
 		var created = manager.createUser(username, password)
-
+		manager.writeToUsersFile
 		println("Creado")
 
 		return created
@@ -47,7 +53,7 @@ object Server {
 		return canLog
 	}
 
-	def containsDirOp(option : Int) : Boolean={
+	def containsDirOp(option : String) : Boolean={
 		var contiene = false;
 
 		for(valor <- opsConDirs){
@@ -70,24 +76,26 @@ object Server {
 		val writer : ObjectOutputStream = new ObjectOutputStream(client.getOutputStream)
     	val reader : ObjectInputStream = new ObjectInputStream(client.getInputStream)
 		
+		println("Se obtuvo conexión de cliente.")
+		
 		var uManager = new UsersManager()		
 		uManager = uManager.readUsersFile
 		
-		var optionReceived = 0
+		var optionReceived = "0"
 		//loop del main menu
-		while (optionReceived != 3){
-			println("Se obtuvo conexión de cliente.")
-			optionReceived = reader.readObject().asInstanceOf[Int]
+		while (optionReceived != "3"){
+			uManager = uManager.readUsersFile
+			optionReceived = reader.readObject().asInstanceOf[String]
 			var mensajeEnviar = ""
 			//el equivalente a switch
 			optionReceived match {
-				case 1 => //create user
+				case "1" => //create user
 					mensajeEnviar = "Ingresar usuario:\n"
 					enviarMensaje(mensajeEnviar, writer)
 					createUser(uManager, reader)
 					mensajeEnviar = "Usuario creado\n"
 					enviarMensaje(mensajeEnviar, writer)
-				case 2 => //login
+				case "2" => //login
 					mensajeEnviar = "Login:\n"
 					var username = reader.readObject().asInstanceOf[String]
 					enviarMensaje(mensajeEnviar, writer)
@@ -102,7 +110,7 @@ object Server {
 						var fileName = ""
 
 						while (optionReceived != 9){//logged user loop
-							optionReceived = reader.readObject().asInstanceOf[Int]
+							optionReceived = reader.readObject().asInstanceOf[String]
 
 							if(containsDirOp(optionReceived))
 								dirName = reader.readObject().asInstanceOf[String]
@@ -113,45 +121,45 @@ object Server {
 							}
 
 							optionReceived match {//user's menu options
-								case 1 => //cd
+								case "1" => //cd
 									loggedUser.changeDirectory(dirName)
 									mensajeEnviar = "cd\n"
-								case 2 => //ls
+								case "2" => //ls
 									var filesList = loggedUser.listFiles()
 									mensajeEnviar = "ls\n"
 									enviarMensaje(filesList, writer)
 									//time.sleep(0.3)									
-								case 3 => //put
+								case "3" => //put
 									put(loggedUser, fileName)
 									mensajeEnviar = "Written\n"
 									println("Archivo obtenido")
-								case 4 => //get
+								case "4" => //get
 									get(loggedUser, fileName)
 									mensajeEnviar = "Sent\n"
-								case 5 => //rm file
+								case "5" => //rm file
 									loggedUser.removeFile(dirName)
 									mensajeEnviar = "rm\n"
-								case 6 => //rmdir
+								case "6" => //rmdir
 									loggedUser.removeDirectory(dirName)
 									mensajeEnviar = "rmdir\n"
-								case 7 => //mkdir
+								case "7" => //mkdir
 									loggedUser.createDirectory(dirName)
 									mensajeEnviar = "mkdir\n"
-								case 8 => //pwd									
+								case "8" => //pwd									
 									var estoy = loggedUser.getCurrentDirName()
 									mensajeEnviar = "pwd\n"
 									enviarMensaje(estoy, writer)
 									//time.sleep(0.3)
-								case 9 => //exit
+								case "9" => //exit
 									println("Logging user off...")
 									mensajeEnviar = "Log Off:\n"
 							}
 
-							if(optionReceived != 4)
+							if(optionReceived != "4")
 								enviarMensaje(mensajeEnviar, writer)
 						}
 					}
-				case 3 => //exit
+				case "3" => //exit
 					println("Exiting...")
 			}
 		}
