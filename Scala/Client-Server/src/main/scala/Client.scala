@@ -18,12 +18,51 @@ object Client {
 		return contiene
 	}
 
-	def put(fName : String, dName : String) : Unit={
-		//TO-DO
+	//get files from server
+	def get(filePath : String,
+		fileName : String,
+		reader : ObjectInputStream,
+		writer : ObjectOutputStream) : Unit={
+
+		enviarMensaje(fileName, writer)
+		var fileSize = reader.readObject.asInstanceOf[String].toInt
+		
+		var pathWrite = filePath + "/" + fileName
+
+		var nFile = new FileOutputStream(pathWrite)
+		var cantRead = fileSize
+
+		while (cantRead > 0){//mientras no se haya leído todo
+			val data = new Array[Byte](Math.min(fileSize, 1024))
+			reader.read(data) //read from socket
+			nFile.write(data) //write to file
+			cantRead -= data.length
+		}
 	}
 
-	def get(fName : String, dName : String) : Unit={
-		//TO-DO	
+	//send files to server
+	def put(fName : String,
+		dirName : String,
+		writer : ObjectOutputStream) : Unit={
+
+		val sFile = new FileInputStream(dirName)
+		val f = new File(dirName)
+		enviarMensaje(fName, writer)
+
+		var fileSize = f.length()
+		var fSizeSend = fileSize.toString
+		enviarMensaje(fSizeSend, writer)
+		
+		while (fileSize > 0){ //mientras no hayamos terminado de leer
+			val data = new Array[Byte](Math.min(fileSize.toInt, 1024))
+			sFile.read(data)
+			writer.write(data)
+			writer.flush()
+
+			fileSize -= data.length
+		}
+
+		println("Archivo enviado.")
 	}
 
 	def enviarMensaje(message : String, escritor : ObjectOutputStream) : Unit={
@@ -144,9 +183,9 @@ object Client {
 	    								val filesList = reader.readObject().asInstanceOf[String]
 	    								println(filesList)
 	    							case "3" =>
-	    								put(fileName, dirName)
+    									put(fileName, dirName, writer)
 	    							case "4" =>
-	    								get(filePath, fileName)
+    									get(filePath, fileName, reader, writer)
 	    							case "8" =>
 	    								val estoy = reader.readObject().asInstanceOf[String]
 	    								println(estoy)

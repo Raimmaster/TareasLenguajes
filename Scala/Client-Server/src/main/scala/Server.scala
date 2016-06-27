@@ -64,12 +64,43 @@ object Server {
 		return contiene
 	}
 
-	def put(user : User, fName : String) : Unit={
-		//TO-DO
+	//get files from clients
+	def put(user : User, fName : String, 
+		reader : ObjectInputStream) : Unit={
+		val dirToWrite = user.getCurrentDirName()
+		var fileSize = reader.readObject.asInstanceOf[String].toInt
+		//var readingSize = 1024
+		var pathWrite = dirToWrite + "/" + fName
+
+		var nFile = new FileOutputStream(pathWrite)
+		var cantRead = fileSize
+
+		while (cantRead > 0){//mientras no se haya leído todo
+			val data = new Array[Byte](Math.min(fileSize, 1024))
+			reader.read(data) //read from socket
+			nFile.write(data) //write to file
+			cantRead -= data.length
+		}
 	}
 
-	def get(user : User, fName : String) : Unit={
-		//TO-DO	
+	//send files to client
+	def get(user : User, fName : String,
+		writer : ObjectOutputStream) : Unit={
+		val sFile = new FileInputStream(fName)
+		val f = new File(fName)
+
+		var fileSize = f.length()
+		var fSizeSend = fileSize.toString
+		enviarMensaje(fSizeSend, writer)
+		
+		while (fileSize > 0){ //mientras no hayamos terminado de leer
+			val data = new Array[Byte](Math.min(fileSize.toInt, 1024))
+			sFile.read(data)
+			writer.write(data)
+			writer.flush()
+
+			fileSize -= data.length
+		}
 	}
 
 	def handleClient(client : Socket) : Unit = {
@@ -80,7 +111,7 @@ object Server {
 		
 		var uManager = new UsersManager()		
 		uManager = uManager.readUsersFile
-		
+		//debugging map
 		for((k, v) <- uManager.usersList){
 			println(k + ": " + v)
 		}
@@ -134,11 +165,11 @@ object Server {
 									enviarMensaje(filesList, writer)
 									//time.sleep(0.3)									
 								case "3" => //put
-									put(loggedUser, fileName)
+									put(loggedUser, fileName, reader)
 									mensajeEnviar = "Written\n"
 									println("Archivo obtenido")
 								case "4" => //get
-									get(loggedUser, fileName)
+									get(loggedUser, fileName, writer)
 									mensajeEnviar = "Sent\n"
 								case "5" => //rm file
 									loggedUser.removeFile(dirName)
