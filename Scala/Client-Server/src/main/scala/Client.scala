@@ -94,7 +94,7 @@ object Client {
     					if(mensaje == "Dir User:\n"){
     						println("Conexion establecida!")
 
-    						while (mensaje != "Log Off:\n"){
+    						while (mensaje != "Log Off:\n"){ //logged user loop
     							println("Opciones: ")
     							for(valor <- 0 until logged_options.length)
     								println(logged_options(valor))
