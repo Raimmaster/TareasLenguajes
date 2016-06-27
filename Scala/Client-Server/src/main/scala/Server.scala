@@ -1,17 +1,18 @@
-package cliSer
-
 //import scala.io.StdIn.{readLine}
 import java.net._
 import java.io._
 import java.util.concurrent._
-//import cliSer.UsersManager
+import cliSer._
 
 object Server {
 	
 	def main(args: Array[String]): Unit = {
 	  val serverSocket = new ServerSocket(8888)
+	  println("Server started")
 	  while(true){
 	  	val client:Socket = serverSocket.accept()
+	  	
+	  	println("Client connected: " + client.getLocalSocketAddress())
 
 	  	new Thread( new Runnable {
 	  		def run(): Unit = {

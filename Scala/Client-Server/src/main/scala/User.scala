@@ -61,16 +61,28 @@ class User (user : String) {
 	}
 
 	def removeFile(filename : String) = {
+		fileToRemove = currentDir + "/" + filename
+		var file = new File(fileToRemove)
 
+		if(file.exists())
+			file.delete()
 	}
 
 	def removeDirectory(dirname : String) = {
+		fileToRemove = currentDir + "/" + dirname
+		var file = new File(fileToRemove)
 
+		if(file.exists())
+			file.delete()
 	}
 
 	def createDirectory(dirname : String) : Boolean ={
+		var dirToCreate = new File(currentDir + "/" + dirname)
 
-		return false
+		if( !dirToCreate.exists() ){
+			return true
+		}else
+			return false
 	}
 
 	def getCurrentDirName : String = {
