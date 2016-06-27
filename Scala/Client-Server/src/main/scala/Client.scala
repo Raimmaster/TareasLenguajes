@@ -102,13 +102,62 @@ object Client {
     							var selectedOption = readLine()
     							var dirName = ""
     							var fileName = ""
-
+    							var filePath = ""
     							selectedOption match {
-    								case "1" =>
+    								case "1" => //cd
     									println("Ingrese el nuevo directorio: ")
-    									dirName = readLine() 
+    									dirName = readLine()
+    								case "2" => //ls
+    									println("Listar directorios: ")
+    								case "3" => //put
+    									println("Ingrese el path del archivo a subir: ")
+    									dirName = readLine()
+    									println("Nombre de nuevo archivo: ")
+    									fileName = readLine()
+    								case "4" => //get
+    									println("Ingrese el nombre nuevo archivo: ")
+    									fileName = readLine()
+    									println("Ingrese el path donde estara: ")
+    									filePath = readLine()
+    								case "5" => //rm file
+    									println("Ingrese el nombre del archivo a eliminar: ")
+    									dirName = readLine()
+    								case "6" => //rmdir
+    									println("Ingrese el nombre del directorio a eliminar: ")
+    									dirName = readLine()
+    								case "7" => //mkdir
+    									println("Ingrese el path del directorio a crear: ")
+    									dirName = readLine()
+    								case "8" => //pwd
+    									print("Me encuentro en: ")
+    								case "9" => //exit
+    									println("Log off...")
     							}
     							
+    							enviarMensaje(selectedOption, writer)
+
+    							if(containsDirOp(selectedOption))
+    								enviarMensaje(dirName, writer)
+
+    							selectedOption match {
+    								case "2" =>
+	    								val filesList = reader.readObject().asInstanceOf[String]
+	    								println(filesList)
+	    							case "3" =>
+	    								put(fileName, dirName)
+	    							case "4" =>
+	    								get(filePath, fileName)
+	    							case "8" =>
+	    								val estoy = reader.readObject().asInstanceOf[String]
+	    								println(estoy)
+    							}
+
+    							if(selectedOption != "4")
+    								mensaje = reader.readObject().asInstanceOf[String]
+    							else
+    								mensaje = "Sent"
+
+    							println(mensaje)
     						}
     					}
     				}

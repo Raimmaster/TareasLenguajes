@@ -81,6 +81,10 @@ object Server {
 		var uManager = new UsersManager()		
 		uManager = uManager.readUsersFile
 		
+		for((k, v) <- uManager.usersList){
+			println(k + ": " + v)
+		}
+
 		var optionReceived = "0"
 		//loop del main menu
 		while (optionReceived != "3"){
