@@ -43,7 +43,7 @@ class User (user : String) {
 		return currentDir
 	}
 
-	def listFiles : String = {
+	def listFiles() : String = {
 		var current = new File(currentDir)
 		val filesDirs = current.listFiles()
 		var f = null
@@ -85,7 +85,7 @@ class User (user : String) {
 			return false
 	}
 
-	def getCurrentDirName : String = {
+	def getCurrentDirName() : String = {
 		return currentDir
 	}
 }

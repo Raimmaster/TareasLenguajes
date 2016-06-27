@@ -25,8 +25,8 @@ object Server {
 	}
 	
 	def createUser(manager : UsersManager, read : ObjectInputStream) : Boolean={
-		var username = read.readObject()
-		var password = read.readObject()
+		var username = read.readObject().asInstanceOf[String]
+		var password = read.readObject().asInstanceOf[String]
 
 		var created = manager.createUser(username, password)
 
@@ -36,12 +36,12 @@ object Server {
 	}
 
 	def enviarMensaje(message : String, escritor : ObjectOutputStream) : Unit={
-		out.writeObject(message)
-		out.flush()
+		escritor.writeObject(message)
+		escritor.flush()
 	}
 
 	def canLogin(username : String, manager : UsersManager, read : ObjectInputStream) : Boolean={
-		var password = read.readObject()
+		var password = read.readObject().asInstanceOf[String]
 		val canLog = manager.login(username, password)
 
 		return canLog
@@ -77,39 +77,39 @@ object Server {
 		//loop del main menu
 		while (optionReceived != 3){
 			println("Se obtuvo conexión de cliente.")
-			optionReceived = reader.readObject()
+			optionReceived = reader.readObject().asInstanceOf[Int]
 			var mensajeEnviar = ""
 			//el equivalente a switch
 			optionReceived match {
 				case 1 => //create user
 					mensajeEnviar = "Ingresar usuario:\n"
-					enviarMensaje(mensajeEnviar)
-					createUser(client, reader)
+					enviarMensaje(mensajeEnviar, writer)
+					createUser(uManager, reader)
 					mensajeEnviar = "Usuario creado\n"
-					enviarMensaje(mensajeEnviar)
+					enviarMensaje(mensajeEnviar, writer)
 				case 2 => //login
 					mensajeEnviar = "Login:\n"
-					var username = reader.readObject()
-					enviarMensaje(mensajeEnviar)
+					var username = reader.readObject().asInstanceOf[String]
+					enviarMensaje(mensajeEnviar, writer)
 
 					if(canLogin(username, uManager, reader)){//if can login, new loop
 						mensajeEnviar = "Dir User:\n"
 						println("Loggineado")
 						var loggedUser = new User(username)
-						enviarMensaje(mensajeEnviar)
+						enviarMensaje(mensajeEnviar, writer)
 						//variables para file work
 						var dirName = ""
 						var fileName = ""
 
 						while (optionReceived != 9){//logged user loop
-							optionReceived = reader.readObject()
+							optionReceived = reader.readObject().asInstanceOf[Int]
 
 							if(containsDirOp(optionReceived))
-								dirName = reader.readObject()
+								dirName = reader.readObject().asInstanceOf[String]
 							
 							if(optionReceived == 3 || optionReceived == 4){
 								println("Opcion: " + optionReceived)
-								fileName = reader.readObject()
+								fileName = reader.readObject().asInstanceOf[String]
 							}
 
 							optionReceived match {//user's menu options
@@ -119,7 +119,7 @@ object Server {
 								case 2 => //ls
 									var filesList = loggedUser.listFiles()
 									mensajeEnviar = "ls\n"
-									writer.writeObject(filesList)
+									enviarMensaje(filesList, writer)
 									//time.sleep(0.3)									
 								case 3 => //put
 									put(loggedUser, fileName)
@@ -140,7 +140,7 @@ object Server {
 								case 8 => //pwd									
 									var estoy = loggedUser.getCurrentDirName()
 									mensajeEnviar = "pwd\n"
-									writer.writeObject(estoy)
+									enviarMensaje(estoy, writer)
 									//time.sleep(0.3)
 								case 9 => //exit
 									println("Logging user off...")
@@ -148,7 +148,7 @@ object Server {
 							}
 
 							if(optionReceived != 4)
-								writer.writeObject(mensajeEnviar)
+								enviarMensaje(mensajeEnviar, writer)
 						}
 					}
 				case 3 => //exit
