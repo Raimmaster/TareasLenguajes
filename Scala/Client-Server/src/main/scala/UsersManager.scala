@@ -27,6 +27,7 @@ class UsersManager extends Serializable {
 	def login(username: String, password: String): Boolean={
 		val pass = userExists(username)
 		var canLogIn : Boolean = false
+		
 		if(pass != ""){
 			if(password == pass){
 				canLogIn = true

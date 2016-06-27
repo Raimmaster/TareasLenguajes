@@ -61,7 +61,7 @@ class User (user : String) {
 	}
 
 	def removeFile(filename : String) = {
-		fileToRemove = currentDir + "/" + filename
+		val fileToRemove = currentDir + "/" + filename
 		var file = new File(fileToRemove)
 
 		if(file.exists())
@@ -69,7 +69,7 @@ class User (user : String) {
 	}
 
 	def removeDirectory(dirname : String) = {
-		fileToRemove = currentDir + "/" + dirname
+		val fileToRemove = currentDir + "/" + dirname
 		var file = new File(fileToRemove)
 
 		if(file.exists())
